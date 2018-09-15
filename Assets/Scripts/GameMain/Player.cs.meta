@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: 411ff1eb96659424e8ee3fc68d6fe03b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Hands: {instanceID: 0}
+  - Deck: {instanceID: 0}
+  - Field: {instanceID: 0}
+  - Trash: {instanceID: 0}
+  - drawSprite: {fileID: 21300000, guid: a766609a36cf847429ee87f7b9223b88, type: 3}
+  - inflationSprite: {fileID: 21300000, guid: 30cb3f18da9d7aa4294e59627c16eb03, type: 3}
+  - deflationSprite: {fileID: 21300000, guid: 360ae440af224a0429cabd562c22bb5b, type: 3}
+  - shuffleSprite: {fileID: 21300000, guid: d6931fad1ad55cf4787ea6251d6c4df8, type: 3}
+  - cointssSprite: {fileID: 21300000, guid: 243dc4a6d48ee7a448340302202d88ca, type: 3}
+  - handeathSprite: {fileID: 21300000, guid: 204c6ac3f10ce9a4b96741df652d0548, type: 3}
+  - deckcountSprite: {fileID: 21300000, guid: 7826c8eb3afd1c24d9bfb9d9ec1d156f, type: 3}
+  - trashcountSprite: {fileID: 21300000, guid: 14973d04ea8fbf548b284f3ba8370c95, type: 3}
+  - vaniraSprite: {fileID: 21300000, guid: c2672fbbeaf8b8d4c97063fc52f40537, type: 3}
+  executionOrder: 100
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
