@@ -67,12 +67,12 @@ public class Player:MonoBehaviour
             num.text = cloneObject.GetComponent<Card>().Num.ToString();
             if (cloneObject.GetComponent<Card>().Num >= 10)
             {
-                num.rectTransform.sizeDelta = new Vector2(144.5f, 144.8f);
+                num.rectTransform.sizeDelta = new Vector2(148.5f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
             }
             else
             {
-                num.rectTransform.sizeDelta = new Vector2(73.3f, 144.8f);
+                num.rectTransform.sizeDelta = new Vector2(75.3f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
             }
             cloneObject.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);

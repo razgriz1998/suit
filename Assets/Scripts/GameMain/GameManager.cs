@@ -230,6 +230,7 @@ public class GameManager : MonoBehaviour {
             buff.text = "±" + Players[turnPlayer].SpecialPoint;
         }
         playerInfo.transform.Find("Point").GetComponent<Text>().text = Players[turnPlayer].NormalPoint + "";
+        playerInfo.transform.Find("Field").GetComponent<Text>().text = "場 "+Players[turnPlayer].FieldList.Count + "枚";
         GameObject gameInfo = GameObject.Find("GameInfo");
         Text gametext = gameInfo.transform.Find("Text").GetComponent<Text>();
         gametext.text = (turn + 1) + "ターン目 " + (turnPlayer+1) + "Pの番";
@@ -337,8 +338,10 @@ public class GameManager : MonoBehaviour {
                 Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].DeckList.Count; break;
             case 7:
                 Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].TrashList.Count; break;
-            case 8: Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].HandsList.Count; break;
-            case 9: Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].FieldList.Count; break;
+            case 9:
+                Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].HandsList.Count; break;
+            case 10:
+                Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].FieldList.Count; break;
         }
         Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num;
 
