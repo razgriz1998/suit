@@ -17,6 +17,8 @@ MonoImporter:
   - deckcountSprite: {fileID: 21300000, guid: 7826c8eb3afd1c24d9bfb9d9ec1d156f, type: 3}
   - trashcountSprite: {fileID: 21300000, guid: 14973d04ea8fbf548b284f3ba8370c95, type: 3}
   - vaniraSprite: {fileID: 21300000, guid: c2672fbbeaf8b8d4c97063fc52f40537, type: 3}
+  - handcountSprite: {fileID: 21300000, guid: 1aee70c423470e94785189d6667a8e12, type: 3}
+  - fieldcountSprite: {fileID: 21300000, guid: 12cb0b77fbd7b6e4997871869f9edf52, type: 3}
   executionOrder: 100
   icon: {instanceID: 0}
   userData: 

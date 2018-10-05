@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField]
     private Sprite drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
-        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite;
+        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite,handcountSprite,fieldcountSprite;
     private List<Sprite> cardSprites;
     [SerializeField]
     private string nextScene;
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         cardSprites = new List<Sprite> {drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
-        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite };
+        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite ,handcountSprite,fieldcountSprite};
         Players = new List<Player>();
         Score = new int[playerNum,turnNum+1];
         for (int i = 0; i < playerNum; i++)
@@ -88,11 +88,11 @@ public class GameManager : MonoBehaviour {
                         ScoreUpdate();
                         turnCount = 0;
                         turn++;
-                        if (turn < playerNum)
+                        if (turn < playerNum)//最終ターン以外
                         {
                             turnPlayer = turn;
                         }
-                        else
+                        else//最終ターン
                         {
                             int max = -1, index = 0;
                             for(int i = 0; i < playerNum; i++)
@@ -104,7 +104,6 @@ public class GameManager : MonoBehaviour {
                                 }
                             }
                             turnPlayer = (index + 1) % playerNum;
-                            Debug.Log(turnPlayer);
                         }
                         ChangeTurnPlayer();
                         foreach (Player p in Players)
@@ -192,21 +191,45 @@ public class GameManager : MonoBehaviour {
     void InfoUpdate()
     {
         GameObject fieldPoint = GameObject.Find("FieldPoint");
-        Text text1 = fieldPoint.transform.Find("1P").GetComponent<Text>();
-        Text text2 = fieldPoint.transform.Find("2P").GetComponent<Text>();
-        Text text3 = fieldPoint.transform.Find("3P").GetComponent<Text>();
-        Text text4 = fieldPoint.transform.Find("4P").GetComponent<Text>();
-        text1.text = "1P 通常点" + Players[0].NormalPoint + "点 特殊点" + Players[0].SpecialPoint +
-            "点 合計点" + (Players[0].NormalPoint + Players[0].SpecialPoint) + "点 手札"+Players[0].HandsList.Count+"枚";
-        text2.text = "2P 通常点" + Players[1].NormalPoint + "点 特殊点" + Players[1].SpecialPoint +
-            "点 合計点" + (Players[1].NormalPoint + Players[1].SpecialPoint) + "点 手札" + Players[1].HandsList.Count + "枚";
-        text3.text = "3P 通常点" + Players[2].NormalPoint + "点 特殊点" + Players[2].SpecialPoint +
-            "点 合計点" + (Players[2].NormalPoint + Players[2].SpecialPoint) + "点 手札" + Players[2].HandsList.Count + "枚";
-        text4.text = "4P 通常点" + Players[3].NormalPoint + "点 特殊点" + Players[3].SpecialPoint +
-            "点 合計点" + (Players[3].NormalPoint + Players[3].SpecialPoint) + "点 手札" + Players[3].HandsList.Count + "枚";
+        Text[] texts = { fieldPoint.transform.Find("1P").GetComponent<Text>() ,
+            fieldPoint.transform.Find("2P").GetComponent<Text>() ,
+        fieldPoint.transform.Find("3P").GetComponent<Text>()};
+        Text[] hands = { fieldPoint.transform.Find("hand1").GetComponent<Text>() ,
+            fieldPoint.transform.Find("hand2").GetComponent<Text>() ,
+        fieldPoint.transform.Find("hand3").GetComponent<Text>()};
+        Text[] points = { fieldPoint.transform.Find("Point1").GetComponent<Text>() ,
+            fieldPoint.transform.Find("Point2").GetComponent<Text>() ,
+        fieldPoint.transform.Find("Point3").GetComponent<Text>()};
+
+        int index = 0;
+        for (int i = 0; i < playerNum - 1; i++) {
+            if (index == turnPlayer)
+            {
+                index++;
+            }
+            texts[i].text = (index+1) + "P";
+            hands[i].text = Players[index].HandsList.Count+"";
+            points[i].text= Players[index].NormalPoint+"";
+            index++;
+        }
+
         GameObject playerInfo = GameObject.Find("PlayerInfo");
-        Text playertext = playerInfo.transform.Find("Text").GetComponent<Text>();
-        playertext.text = "山札" + Players[turnPlayer].DeckList.Count + "枚 墓地" + Players[turnPlayer].TrashList.Count + "枚";
+        playerInfo.transform.Find("Deck").GetComponent<Text>().text= Players[turnPlayer].DeckList.Count+"";
+        playerInfo.transform.Find("Trash").GetComponent<Text>().text = Players[turnPlayer].TrashList.Count + "";
+        Text buff = playerInfo.transform.Find("Buff").GetComponent<Text>();
+        if (Players[turnPlayer].SpecialPoint > 0)
+        {
+            buff.text = "+" + Players[turnPlayer].SpecialPoint;
+        }
+        else if (Players[turnPlayer].SpecialPoint < 0)
+        {
+            buff.text = "" + Players[turnPlayer].SpecialPoint;
+        }
+        else
+        {
+            buff.text = "±" + Players[turnPlayer].SpecialPoint;
+        }
+        playerInfo.transform.Find("Point").GetComponent<Text>().text = Players[turnPlayer].NormalPoint + "";
         GameObject gameInfo = GameObject.Find("GameInfo");
         Text gametext = gameInfo.transform.Find("Text").GetComponent<Text>();
         gametext.text = (turn + 1) + "ターン目 " + (turnPlayer+1) + "Pの番";
@@ -218,8 +241,9 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < playerNum; i++)
         {
             Players[i].ScoreUpdate();
-            Text text = go.transform.Find((i + 1) + "P").GetComponent<Text>();
-            text.text += " " + Players[i].Score[turn];
+            Text text = go.transform.Find("score"+i+""+turn).GetComponent<Text>();
+            text.enabled = true;
+            text.text = Players[i].Score[turn]+"";
             Score[i,turn] = Players[i].Score[turn];
             Text total = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
             total.text = Players[i].TotalScore.ToString();
