@@ -257,10 +257,28 @@ public class GameManager : MonoBehaviour {
     {
         for (int i = 0; i < Players[turnPlayer].HandsList.Count; i++)
         {
-            Players[turnPlayer].HandsList[i].transform.Find("Arrow").GetComponent<Image>().enabled = false;
-
+            if (i != selectedHand)
+            {
+                Players[turnPlayer].HandsList[i].transform.Find("Arrow").GetComponent<Image>().enabled = false;
+                Players[turnPlayer].HandsList[i].transform.localScale = new Vector3(1.0f, 1.0f);
+                
+                if (i < selectedHand)
+                {
+                    Players[turnPlayer].HandsList[i].transform.SetSiblingIndex(i);
+                }
+                else
+                {
+                    Players[turnPlayer].HandsList[i].transform.SetSiblingIndex(i-1);
+                }
+            }
+            else
+            {
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Arrow").GetComponent<Image>().enabled = true;
+                Players[turnPlayer].HandsList[selectedHand].transform.localScale = new Vector3(1.2f, 1.2f);
+                Players[turnPlayer].HandsList[selectedHand].transform.SetAsLastSibling();
+            }
         }
-        Players[turnPlayer].HandsList[selectedHand].transform.Find("Arrow").GetComponent<Image>().enabled = true;
+       
     }
 
         public void AllPlayerShaffle()
