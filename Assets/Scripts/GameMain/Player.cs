@@ -11,6 +11,7 @@ public class Player:MonoBehaviour
     [SerializeField]
     private int NumDeck;
     public bool TurnPlayer { get; set; }
+    public bool EndThisTurn { get; set; }
     public int NormalPoint { get; set; }
     public int SpecialPoint { get; set; }
     public List<int> Score { get; set; }
@@ -23,8 +24,9 @@ public class Player:MonoBehaviour
     private GameObject Hands,Deck,Field,Trash;
     [SerializeField]
     private Sprite drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
-        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite;
+        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite, handcountSprite, fieldcountSprite;
     private List<Sprite> cardSprites;
+    
     private void Start()
     {
        
@@ -38,7 +40,7 @@ public class Player:MonoBehaviour
         NormalPoint = 0;
         SpecialPoint = 0;
         cardSprites = new List<Sprite> {drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
-        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite };
+        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite,handcountSprite,fieldcountSprite };
         DeckList = new List<GameObject>();
         HandsList = new List<GameObject>();
         FieldList = new List<GameObject>();
@@ -65,12 +67,12 @@ public class Player:MonoBehaviour
             num.text = cloneObject.GetComponent<Card>().Num.ToString();
             if (cloneObject.GetComponent<Card>().Num >= 10)
             {
-                num.rectTransform.sizeDelta = new Vector2(144.5f, 144.8f);
+                num.rectTransform.sizeDelta = new Vector2(148.5f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
             }
             else
             {
-                num.rectTransform.sizeDelta = new Vector2(73.3f, 144.8f);
+                num.rectTransform.sizeDelta = new Vector2(75.3f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
             }
             cloneObject.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
@@ -132,6 +134,8 @@ public class Player:MonoBehaviour
         FieldList.Add(HandsList[n]);
         HandsList.RemoveAt(n);
         HandsUpdate();
+
+        EndThisTurn = true;
     }
 
     public void TurnChange()
@@ -146,6 +150,7 @@ public class Player:MonoBehaviour
         NormalPoint = 0;
         SpecialPoint = 0;
         HandsUpdate();
+        EndThisTurn = false;
     }
 
     public void ScoreUpdate()
