@@ -22,6 +22,7 @@ public class CursorMove : MonoBehaviour {
 
     private bool isKeyDown;
 
+    AxisKeyManager axiskeymanager = new AxisKeyManager();
 
     // Use this for initialization
     void Start() {
@@ -31,16 +32,16 @@ public class CursorMove : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
-        //カーソルの回転
+        //カーソルの回転アニメーション
         transform.Rotate(5, 0, 0);
-
+        
         //コントローラ操作
-        if (Input.GetAxis("Vertical") == 0) {
+        if (Input.GetAxis("Vertical1") == 0 && Input.GetAxis("Horizontal1") == 0) {
             isKeyDown = false;
         }
-
-        int AxisValue = GetAxisDown();
-
+        
+        int AxisValue = axiskeymanager.GetVerticalKeyDown(ref isKeyDown,"1");
+        
         if (AxisValue == 1) {
             if (this.transform.localPosition == StartButton_pos) {
                 this.transform.localPosition = ExitButton_pos;
@@ -65,7 +66,7 @@ public class CursorMove : MonoBehaviour {
         }
 
         //シーンチェンジ
-        if (Input.GetKeyDown("joystick button 1")){
+        if (Input.GetKeyDown("joystick 1 button 1")){
             if (this.transform.localPosition == StartButton_pos) {
                 SceneManager.LoadScene(StartSceneName);
             }
@@ -76,21 +77,6 @@ public class CursorMove : MonoBehaviour {
                 Application.Quit();
                 Debug.Log("Application Quit");
             }
-        }
-    }
-
-    public int GetAxisDown() {
-       
-        if (Input.GetAxis("Vertical") == 1.0f && !isKeyDown) {
-            isKeyDown = true;
-            return 1;
-        }
-        else if(Input.GetAxis("Vertical") == -1.0f && !isKeyDown){
-            isKeyDown = true;
-            return -1;
-        }
-        else {
-            return 0;
         }
     }
 }

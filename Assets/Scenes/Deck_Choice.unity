@@ -1363,6 +1363,7 @@ GameObject:
   - component: {fileID: 1363545984}
   - component: {fileID: 1363545986}
   - component: {fileID: 1363545985}
+  - component: {fileID: 1363545987}
   m_Layer: 5
   m_Name: Cursor
   m_TagString: Untagged
@@ -1385,7 +1386,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -456, y: 111}
+  m_AnchoredPosition: {x: -191, y: 111}
   m_SizeDelta: {x: 264, y: 347}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1363545985
@@ -1422,6 +1423,20 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1363545983}
   m_CullTransparentMesh: 0
+--- !u!114 &1363545987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1363545983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f2dfe32b2fbc384fb6ce9afe320c35e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player_num: 1
+  red_deck_pos: {x: -456, y: 111, z: 0}
+  black_deck_pos: {x: -191, y: 111, z: 0}
 --- !u!1 &1789545677
 GameObject:
   m_ObjectHideFlags: 0
