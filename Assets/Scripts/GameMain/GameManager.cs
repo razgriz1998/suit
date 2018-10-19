@@ -191,43 +191,37 @@ public class GameManager : MonoBehaviour {
     void InfoUpdate()
     {
         GameObject fieldPoint = GameObject.Find("FieldPoint");
-        Text[] texts = { fieldPoint.transform.Find("1P").GetComponent<Text>() ,
-            fieldPoint.transform.Find("2P").GetComponent<Text>() ,
-        fieldPoint.transform.Find("3P").GetComponent<Text>()};
         Text[] hands = { fieldPoint.transform.Find("hand1").GetComponent<Text>() ,
             fieldPoint.transform.Find("hand2").GetComponent<Text>() ,
-        fieldPoint.transform.Find("hand3").GetComponent<Text>()};
+        fieldPoint.transform.Find("hand3").GetComponent<Text>(),
+        fieldPoint.transform.Find("hand4").GetComponent<Text>()
+        };
         Text[] points = { fieldPoint.transform.Find("Point1").GetComponent<Text>() ,
             fieldPoint.transform.Find("Point2").GetComponent<Text>() ,
-        fieldPoint.transform.Find("Point3").GetComponent<Text>()};
-
-        int index = 0;
-        for (int i = 0; i < playerNum - 1; i++) {
-            if (index == turnPlayer)
-            {
-                index++;
-            }
-            texts[i].text = (index+1) + "P";
-            hands[i].text = Players[index].HandsList.Count+"";
-            points[i].text= Players[index].NormalPoint+"";
-            index++;
+        fieldPoint.transform.Find("Point3").GetComponent<Text>(),
+        fieldPoint.transform.Find("Point4").GetComponent<Text>()
+        };
+        
+        for (int i = 0; i < playerNum; i++) {
+            hands[i].text = Players[i].HandsList.Count+"";
+            points[i].text= Players[i].NormalPoint+"";
         }
 
         GameObject playerInfo = GameObject.Find("PlayerInfo");
         playerInfo.transform.Find("Deck").GetComponent<Text>().text= Players[turnPlayer].DeckList.Count+"";
         playerInfo.transform.Find("Trash").GetComponent<Text>().text = Players[turnPlayer].TrashList.Count + "";
         Text buff = playerInfo.transform.Find("Buff").GetComponent<Text>();
-        if (Players[turnPlayer].SpecialPoint > 0)
+        if (Player.SpecialPoint > 0)
         {
-            buff.text = "+" + Players[turnPlayer].SpecialPoint;
+            buff.text = "+" + Player.SpecialPoint;
         }
-        else if (Players[turnPlayer].SpecialPoint < 0)
+        else if (Player.SpecialPoint < 0)
         {
-            buff.text = "" + Players[turnPlayer].SpecialPoint;
+            buff.text = "" + Player.SpecialPoint;
         }
         else
         {
-            buff.text = "±" + Players[turnPlayer].SpecialPoint;
+            buff.text = "";
         }
         playerInfo.transform.Find("Point").GetComponent<Text>().text = Players[turnPlayer].NormalPoint + "";
         playerInfo.transform.Find("Field").GetComponent<Text>().text = "場 "+Players[turnPlayer].FieldList.Count + "枚";
@@ -297,10 +291,7 @@ public class GameManager : MonoBehaviour {
     }
     public void AllBuff(int i)
     {
-        foreach (Player p in Players)
-        {
-            p.SpecialPoint += i;
-        }
+        Player.SpecialPoint+=i;
     }
     public void Handeath()
     {

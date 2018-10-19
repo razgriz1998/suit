@@ -13,7 +13,7 @@ public class Player:MonoBehaviour
     public bool TurnPlayer { get; set; }
     public bool EndThisTurn { get; set; }
     public int NormalPoint { get; set; }
-    public int SpecialPoint { get; set; }
+    static public int SpecialPoint { get; set; }
     public List<int> Score { get; set; }
     public int TotalScore { get; set; }
     public List<GameObject> DeckList { get; private set; }
