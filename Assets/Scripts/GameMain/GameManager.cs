@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour {
     public int[,] Score { get; private set; }
     private int playerNum = 4;
     private int turnCount = 0;
+    private Animator playing = null;
+    private int frameCount=0;
+    [SerializeField]
+    GameObject panel;
 
     [SerializeField]
     private Sprite drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
@@ -67,7 +71,14 @@ public class GameManager : MonoBehaviour {
     void Update () {
         if (!gameEnd)
         {
-            if (Key())
+            
+            if(playing!=null && !playing.GetCurrentAnimatorStateInfo(0).IsName("Animation")&&frameCount!=0 )
+            {
+                playing = null;
+                panel.GetComponent<Image>().enabled = false;
+            }
+            
+            if (playing == null && Key())
             {
                 if (cardPlay)
                 {
@@ -85,33 +96,7 @@ public class GameManager : MonoBehaviour {
                     
                     if (turnCount == playerNum)//ターンチェンジ判定
                     {
-                        ScoreUpdate();
-                        turnCount = 0;
-                        turn++;
-                        if (turn < playerNum)//最終ターン以外
-                        {
-                            turnPlayer = turn;
-                        }
-                        else//最終ターン
-                        {
-                            int max = -1, index = 0;
-                            for(int i = 0; i < playerNum; i++)
-                            {
-                                if (max < Players[i].TotalScore)
-                                {
-                                    max = Players[i].TotalScore;
-                                    index = i;
-                                }
-                            }
-                            turnPlayer = (index + 1) % playerNum;
-                        }
-                        ChangeTurnPlayer();
-                        foreach (Player p in Players)
-                        {
-                            p.TurnChange();
-                        }
-                        
-                        
+                        TurnChange();
                         if (turn == turnNum)//ゲーム終了
                         {
                             gameEnd = true;
@@ -155,6 +140,7 @@ public class GameManager : MonoBehaviour {
                 SceneManager.LoadScene(nextScene);
             }
         }
+        frameCount++;
 	}
 
     bool Key()
@@ -365,5 +351,38 @@ public class GameManager : MonoBehaviour {
         if (turnPlayer >= 0 && turnPlayer < Players.Count) {
             Players[turnPlayer].TurnPlayer = true;
         }
+        GameObject go = GameObject.Find("TurnChange");
+        playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
+        playing.SetTrigger("start");
+        panel.GetComponent<Image>().enabled = true;
+    }
+    void TurnChange()
+    {
+        ScoreUpdate();
+        turnCount = 0;
+        turn++;
+        if (turn < playerNum)//最終ターン以外
+        {
+            turnPlayer = turn;
+        }
+        else//最終ターン
+        {
+            int max = -1, index = 0;
+            for (int i = 0; i < playerNum; i++)
+            {
+                if (max < Players[i].TotalScore)
+                {
+                    max = Players[i].TotalScore;
+                    index = i;
+                }
+            }
+            turnPlayer = (index + 1) % playerNum;
+        }
+        ChangeTurnPlayer();
+        foreach (Player p in Players)
+        {
+            p.TurnChange();
+        }
+
     }
 }
