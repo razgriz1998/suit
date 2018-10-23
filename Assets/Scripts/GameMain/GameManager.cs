@@ -18,12 +18,15 @@ public class GameManager : MonoBehaviour {
     private int turnNum = 5;
     private bool gameEnd = false;
     private bool nextPlayer = false;
-    private bool cardPlay = false;
+    private bool decide = false;
     public int[,] Score { get; private set; }
     private int playerNum = 4;
     private int turnCount = 0;
     private Animator playing = null;
     private int frameCount=0;
+    public bool pause { get; private set; }
+    public int pauseSelected{ get; private set; }
+    private const int numPauseText = 2;
     [SerializeField]
     GameObject panel;
 
@@ -50,6 +53,7 @@ public class GameManager : MonoBehaviour {
         ChangeTurnPlayer();
         HandUpdate();
         InfoUpdate();
+        pauseSelected = 0;
     }
 
 
@@ -77,60 +81,78 @@ public class GameManager : MonoBehaviour {
                 playing = null;
                 panel.GetComponent<Image>().enabled = false;
             }
-            
-            if (playing == null && Key())
+            if (!pause)
             {
-                if (cardPlay)
+                if (playing == null && Key())
                 {
-                    Play();
-                }
-                if (Players[turnPlayer].HandsList.Count==0)
-                {
-                    nextPlayer = true;
-                }
-                if (nextPlayer)
-                {
-                    turnCount++;
-                    Players[turnPlayer].HideHands();
-                    turnPlayer = (turnPlayer + 1) % Players.Count;
-                    
-                    if (turnCount == playerNum)//ターンチェンジ判定
+                    if (decide)
                     {
-                        TurnChange();
-                        if (turn == turnNum)//ゲーム終了
+                        Play();
+                    }
+                    if (Players[turnPlayer].HandsList.Count == 0)
+                    {
+                        nextPlayer = true;
+                    }
+                    if (nextPlayer)
+                    {
+                        turnCount++;
+                        Players[turnPlayer].HideHands();
+                        turnPlayer = (turnPlayer + 1) % Players.Count;
+
+                        if (turnCount == playerNum)//ターンチェンジ判定
                         {
-                            gameEnd = true;
-                            GameObject go = GameObject.Find("ScoreBoard");
-                            for (int i = 0; i < playerNum; i++) {
-                                Text text = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
-                                text.text =Players[i].TotalScore.ToString();
-                                Score[i,turnNum] = Players[i].TotalScore;
+                            TurnChange();
+                            if (turn == turnNum)//ゲーム終了
+                            {
+                                gameEnd = true;
+                                GameObject go = GameObject.Find("ScoreBoard");
+                                for (int i = 0; i < playerNum; i++)
+                                {
+                                    Text text = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
+                                    text.text = Players[i].TotalScore.ToString();
+                                    Score[i, turnNum] = Players[i].TotalScore;
+                                }
+                            }
+                            else
+                            {
+                                Players[turnPlayer].ShowHands();
+
                             }
                         }
                         else
                         {
                             Players[turnPlayer].ShowHands();
-
+                            ChangeTurnPlayer();
                         }
                     }
-                    else
+                    if ((decide || nextPlayer) && !gameEnd)
                     {
-                        Players[turnPlayer].ShowHands();
-                        ChangeTurnPlayer();
+                        selectedHand = 0;
+                        InfoUpdate();
+                    }
+                    if (!gameEnd)
+                    {
+                        HandUpdate();
+                    }
+
+
+                    //HandUpdate();
+                }
+            }
+            else if (pause)
+            {
+                Debug.Log(pauseSelected);
+                if (Key())
+                {
+                    if (decide)
+                    {
+                        switch (pauseSelected)
+                        {
+                            case 0: pause = false;break;
+                            case 1: SceneManager.LoadScene("title"); break;
+                        }
                     }
                 }
-                if ((cardPlay || nextPlayer )&& !gameEnd)
-                {
-                    selectedHand = 0;
-                    InfoUpdate();
-                }
-                if (!gameEnd)
-                {
-                    HandUpdate();
-                }
-
-
-                //HandUpdate();
             }
         }
         else
@@ -146,8 +168,10 @@ public class GameManager : MonoBehaviour {
     bool Key()
     {
         nextPlayer = false;
-        cardPlay = false;
+        decide = false;
         int handCount = Players[turnPlayer].HandsList.Count;
+        if (!pause)
+        {
             if (Input.GetKeyDown(KeyCode.D))
             {
                 selectedHand = (++selectedHand) % handCount;
@@ -164,7 +188,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Return))
             {
-                cardPlay = true;
+                decide = true;
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.E))
@@ -172,6 +196,40 @@ public class GameManager : MonoBehaviour {
                 nextPlayer = true;
                 return true;
             }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                pause = true;
+                pauseSelected = 0;
+                return true;
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                pauseSelected = (++pauseSelected) % numPauseText;
+                return true;
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                --pauseSelected;
+                if (pauseSelected == -1)
+                {
+                    pauseSelected = numPauseText - 1;
+                }
+                return true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Return))
+            {
+                decide = true;
+                return true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                pause = false; 
+                return true;
+            }
+        }
         return false;
 }
     void InfoUpdate()
