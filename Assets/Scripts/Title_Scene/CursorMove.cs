@@ -66,7 +66,7 @@ public class CursorMove : MonoBehaviour {
         }
 
         //シーンチェンジ
-        if (Input.GetKeyDown("joystick 1 button 1")){
+        if (Input.GetButtonDown("Submit1")){
             if (this.transform.localPosition == StartButton_pos) {
                 SceneManager.LoadScene(StartSceneName);
             }
