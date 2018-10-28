@@ -68,6 +68,7 @@ public class CursorMove : MonoBehaviour {
         //シーンチェンジ
         if (Input.GetButtonDown("Submit1")){
             if (this.transform.localPosition == StartButton_pos) {
+                GameState.Instance.Init();
                 SceneManager.LoadScene(StartSceneName);
             }
             else if (this.transform.localPosition == RuleButton_pos) {

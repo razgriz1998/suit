@@ -20,23 +20,22 @@ public class Singleton<T> where T : class, new() {
 }
 
 public class GameState : Singleton<GameState> {
-    /*
-    int[] _ModelNum = new int[4];
-    public int PlayerNum { get; set; }
-    public int[] ControllerNum = new int[4];
-    public int[] ModelNum
-    {
-        get { return _ModelNum; }
-        set { _ModelNum = value; }
-    }
-    */
 
     //ポーズ中か否か
     public bool isPause = false;
 
-    //0…赤,1…黒
+    //1…黒,0…赤
     public int[] deck_type = new int[4];
 
-    //デバッグ用
+    //デッキ選択した人数（デッキ選択で4になればシーンチェンジ)
     public int isSetDeck = 0;
+
+    //初期化
+    public void Init() {
+        isPause = false;
+        for (int i = 0; i < 4; i++) {
+            deck_type[i] = 0;
+        }
+        isSetDeck = 0;
+    }
 }
