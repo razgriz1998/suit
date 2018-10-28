@@ -29,12 +29,22 @@ public class Player:MonoBehaviour
     
     private void Start()
     {
-       
-        
     }
 
     private void Awake()
     {
+        if (GameState.Instance.isSetDeck == 4) {
+
+            NumDeck = GameState.Instance.deck_type[Num - 1];
+        }
+        else {
+            if (Num == 1 || Num == 3) {
+                NumDeck = 0;
+            }
+            else {
+                NumDeck = 1;
+            }
+        }
         Score = new List<int>();
         TotalScore = 0;
         NormalPoint = 0;

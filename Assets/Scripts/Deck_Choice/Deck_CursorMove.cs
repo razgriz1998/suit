@@ -17,6 +17,15 @@ public class Deck_CursorMove : MonoBehaviour {
     [SerializeField]
     private GameObject DecidedObj;
 
+    [SerializeField]
+    private GameObject PauseCanvas;
+
+    [SerializeField]
+    private GameObject ContinueIcon;
+
+    [SerializeField]
+    private GameObject ExitIcon;
+
     private bool isKeyDown;
     private bool isDecide;
 
@@ -24,7 +33,11 @@ public class Deck_CursorMove : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        if (player_num == 1) {
+            PauseCanvas.SetActive(false);
+            ContinueIcon.SetActive(true);
+            ExitIcon.SetActive(false);
+        }
         axiskeymanger = new AxisKeyManager();
         this.transform.localPosition = red_deck_pos;
         DecidedObj.SetActive(false);
@@ -58,10 +71,10 @@ public class Deck_CursorMove : MonoBehaviour {
                 //決定
                 if (Input.GetButtonDown("Submit" + player_num)) {
                     if (this.transform.localPosition == red_deck_pos) {
-                        GameState.Instance.deck_type[player_num - 1] = 0;
+                        GameState.Instance.deck_type[player_num - 1] = 1;
                     }
                     else if (this.transform.localPosition == black_deck_pos) {
-                        GameState.Instance.deck_type[player_num - 1] = 1;
+                        GameState.Instance.deck_type[player_num - 1] = 0;
                     }
 
                     DecidedObj.SetActive(true);
@@ -81,7 +94,10 @@ public class Deck_CursorMove : MonoBehaviour {
 
             //ポーズ
             if (Input.GetButtonDown("Pause" + player_num)) {
-                Debug.Log(player_num + "start");
+
+                PauseCanvas.SetActive(true);
+                GameState.Instance.isPause = true;
+
             }
 
             //シーンチェンジ
@@ -94,6 +110,42 @@ public class Deck_CursorMove : MonoBehaviour {
         //ポーズ中
         else {
 
+            //カーソル操作
+            if (Input.GetAxis("Vertical" + player_num) == 0) {
+                isKeyDown = false;
+            }
+
+            int AxisValue = axiskeymanger.GetVerticalKeyDown(ref isKeyDown, player_num.ToString());
+
+            if (AxisValue == 1 || AxisValue == -1) {
+                if (ContinueIcon.active) {
+                    ContinueIcon.SetActive(false);
+                    ExitIcon.SetActive(true);
+                }
+                else if (ExitIcon.active) {
+                    ExitIcon.SetActive(false);
+                    ContinueIcon.SetActive(true);
+                }
+            }
+
+            //決定
+            if (Input.GetButtonDown("Submit" + player_num)) {
+                if (ContinueIcon.active) {
+
+                    PauseCanvas.SetActive(false);
+                    GameState.Instance.isPause = false;
+                }
+                else if (ExitIcon.active) {
+
+                    SceneManager.LoadScene("Title");
+                }
+            }
+
+            //キャンセル
+            if (Input.GetButtonDown("Cancel" + player_num)) {
+                PauseCanvas.SetActive(false);
+                GameState.Instance.isPause = false;
+            }
         }
     }
 }
