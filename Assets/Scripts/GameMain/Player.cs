@@ -21,12 +21,8 @@ public class Player:MonoBehaviour
     public List<GameObject> FieldList { get; private set; }
     public List<GameObject> TrashList { get; private set; }
     [SerializeField]
-    private GameObject Hands,Deck,Field,Trash;
-    [SerializeField]
-    private Sprite drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
-        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite, handcountSprite, fieldcountSprite;
-    private List<Sprite> cardSprites;
-    
+    private GameObject Hands,Deck,Field,Trash,gameManager;
+    private List<Sprite> miniCardSprites;
     private void Start()
     {
        
@@ -39,8 +35,6 @@ public class Player:MonoBehaviour
         TotalScore = 0;
         NormalPoint = 0;
         SpecialPoint = 0;
-        cardSprites = new List<Sprite> {drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
-        handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite,handcountSprite,fieldcountSprite };
         DeckList = new List<GameObject>();
         HandsList = new List<GameObject>();
         FieldList = new List<GameObject>();
@@ -59,13 +53,23 @@ public class Player:MonoBehaviour
             }
             GameObject prefab = (GameObject)Resources.Load("Prefabs/GameMain/Card");
             GameObject cloneObject = Instantiate(prefab, this.transform.position, Quaternion.identity);
-            cloneObject.GetComponent<Card>().Id = intDatas[0];
-            cloneObject.GetComponent<Card>().Num = intDatas[1];
+            GameObject cardObject = cloneObject.transform.Find("Card").gameObject;
+            Card card = cloneObject.GetComponent<Card>();
+            card.Id = intDatas[0];
+            card.Num = intDatas[1];
+            card.CalcNum = intDatas[1];
             cloneObject.transform.parent = Deck.transform;
-            cloneObject.GetComponent<Image>().sprite = cardSprites[cloneObject.GetComponent<Card>().Id];
-            Text num = cloneObject.transform.Find("Number").GetComponent<Text>();
-            num.text = cloneObject.GetComponent<Card>().Num.ToString();
-            if (cloneObject.GetComponent<Card>().Num >= 10)
+            Text num = cardObject.transform.Find("Number").GetComponent<Text>();
+            num.text = card.Num.ToString();
+            if (card.Id > 10 || card.Id < 6)
+            {
+                num.color = new Color(1, 1, 1);
+            }
+            Text name = cardObject.transform.Find("Name").GetComponent<Text>();
+            name.text = Card.Names[card.Id];
+            Text text = cardObject.transform.Find("Text").GetComponent<Text>();
+            text.text = Card.Texts[card.Id];
+            /*if (cloneObject.GetComponent<Card>().Num >= 10)
             {
                 num.rectTransform.sizeDelta = new Vector2(148.5f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
@@ -74,8 +78,8 @@ public class Player:MonoBehaviour
             {
                 num.rectTransform.sizeDelta = new Vector2(75.3f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
-            }
-            cloneObject.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+            }*/
+            cardObject.GetComponent<RectTransform>().localScale = new Vector3(0.45f, 0.45f, 0.45f);
             DeckList.Add(cloneObject);
 
         }
@@ -88,6 +92,10 @@ public class Player:MonoBehaviour
 
     private void Update()
     {
+        if (miniCardSprites == null)
+        {
+            miniCardSprites = gameManager.GetComponent<SpriteReader>().miniCardSprites;
+        }
     }
 
     public void DeckShuffle()
@@ -116,7 +124,8 @@ public class Player:MonoBehaviour
             DeckList[0].transform.parent = Hands.transform;
             if (TurnPlayer)
             {
-                DeckList[0].SetActive(true);
+                DeckList[0].transform.Find("Card").gameObject.SetActive(true);
+                Debug.Log(DeckList[0].GetComponent<Card>().Num);
             }
             HandsList.Add(DeckList[0]);
             DeckList.RemoveAt(0);
@@ -127,9 +136,13 @@ public class Player:MonoBehaviour
     public void Play(int n)
     {
         HandsList[n].transform.parent = Field.transform;
+        GameObject miniCard = HandsList[n].transform.Find("MiniCard").gameObject;
+        miniCard.SetActive(true);
+        miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
+        miniCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-159.4f+20*FieldList.Count-1, 169.5f - 30.1f * (Num-1));
         if (TurnPlayer)
         {
-            HandsList[n].SetActive(false);
+            HideHand(n);
         }
         FieldList.Add(HandsList[n]);
         HandsList.RemoveAt(n);
@@ -143,6 +156,7 @@ public class Player:MonoBehaviour
         foreach(GameObject go in FieldList)
         {
             go.transform.parent = Trash.transform;
+            go.transform.Find("MiniCard").gameObject.SetActive(false);
         }
         TrashList.AddRange(FieldList);
         FieldList.Clear();
@@ -164,10 +178,11 @@ public class Player:MonoBehaviour
         foreach(GameObject go in HandsList)
         {
             go.transform.parent = Deck.transform;
-            if (TurnPlayer)
-            {
-                go.SetActive(false);
-            }
+        }
+
+        if (TurnPlayer)
+        {
+            HideHands();
         }
         DeckList.AddRange(HandsList);
         HandsList.Clear();
@@ -181,7 +196,7 @@ public class Player:MonoBehaviour
             HandsList[card].transform.parent = Deck.transform;
             if (TurnPlayer)
             {
-                HandsList[card].SetActive(false);
+                HideHand(card);
             }
             DeckList.Add(HandsList[card]);
             DeckShuffle();
@@ -199,7 +214,7 @@ public class Player:MonoBehaviour
                 float width = HandsList[0].GetComponent<RectTransform>().sizeDelta.x;
                 for (int i = 0; i < HandsList.Count; i++)
                 {
-                    HandsList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(288f + width * i, -312f);
+                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + (width+10) * i, -133f);
                 }
             }
             else
@@ -207,7 +222,7 @@ public class Player:MonoBehaviour
                 float width = HandsList[0].GetComponent<RectTransform>().sizeDelta.x;
                 for (int i = 0; i < HandsList.Count; i++)
                 {
-                    HandsList[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(288f + i * width * 3 / (HandsList.Count), -312f);
+                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + i * (width+10) * 3 / (HandsList.Count), -133f);
                     
                 }
             }
@@ -217,27 +232,32 @@ public class Player:MonoBehaviour
     public void HideAllCards()
     {
         foreach(GameObject go in DeckList) {
-            go.SetActive(false);
+            go.transform.Find("Card").gameObject.SetActive(false);
         }
         foreach (GameObject go in HandsList)
         {
-            go.SetActive(false);
+            go.transform.Find("Card").gameObject.SetActive(false);
         }
         foreach (GameObject go in FieldList)
         {
-            go.SetActive(false);
+            go.transform.Find("Card").gameObject.SetActive(false);
         }
         foreach (GameObject go in TrashList)
         {
-            go.SetActive(false);
+            go.transform.Find("Card").gameObject.SetActive(false);
         }
     }
     public void HideHands()
     {
         foreach (GameObject go in HandsList)
         {
-            go.SetActive(false);
+            go.transform.Find("Card").gameObject.SetActive(false);
         }
+    }
+
+    public void HideHand(int n)
+    {
+        HandsList[n].transform.Find("Card").gameObject.SetActive(false);
     }
 
     public void ShowHands()
@@ -245,7 +265,8 @@ public class Player:MonoBehaviour
 
         foreach (GameObject go in HandsList)
         {
-            go.SetActive(true);
+            go.transform.Find("Card").gameObject.SetActive(true);
         }
     }
 }
+
