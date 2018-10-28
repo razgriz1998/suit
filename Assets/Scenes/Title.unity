@@ -734,7 +734,7 @@ MonoBehaviour:
   StartButton_pos: {x: 30, y: -150, z: 0}
   RuleButton_pos: {x: 30, y: -220, z: 0}
   ExitButton_pos: {x: 30, y: -290, z: 0}
-  StartSceneName: Deck_Choice
+  StartSceneName: Rule
   RuleSceneName: Rule
 --- !u!114 &1216870229
 MonoBehaviour:
