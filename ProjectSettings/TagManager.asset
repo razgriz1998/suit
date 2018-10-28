@@ -47,3 +47,6 @@ TagManager:
   - name: Field
     uniqueID: 2413762395
     locked: 0
+  - name: Tip
+    uniqueID: 3238296353
+    locked: 0

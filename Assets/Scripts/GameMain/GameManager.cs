@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour {
     private int turnPlayer = 0;
     private int handMax = 7;
     private int selectedHand = 0;
+    private bool turnEndButton = false;
     private int turn = 0;
     private int turnNum = 5;
     private bool gameEnd = false;
@@ -188,12 +189,21 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Return))
             {
-                decide = true;
+                if (turnEndButton)
+                {
+                    nextPlayer = true;
+                }
+                else
+                {
+                    decide = true;
+                }
+
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.E))
+            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S))
             {
-                nextPlayer = true;
+                turnEndButton = !turnEndButton;
+                Debug.Log(turnEndButton);
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.Escape))
@@ -245,7 +255,8 @@ public class GameManager : MonoBehaviour {
         fieldPoint.transform.Find("Point3").GetComponent<Text>(),
         fieldPoint.transform.Find("Point4").GetComponent<Text>()
         };
-        
+        fieldPoint.transform.Find("Cursor").GetComponent<RectTransform>().anchoredPosition = new Vector2(-334, 169.5f - 30.1f * (turnPlayer));
+
         for (int i = 0; i < playerNum; i++) {
             hands[i].text = Players[i].HandsList.Count+"";
             points[i].text= Players[i].NormalPoint+"";
@@ -268,10 +279,10 @@ public class GameManager : MonoBehaviour {
             buff.text = "";
         }
         playerInfo.transform.Find("Point").GetComponent<Text>().text = Players[turnPlayer].NormalPoint + "";
-        playerInfo.transform.Find("Field").GetComponent<Text>().text = "場 "+Players[turnPlayer].FieldList.Count + "枚";
-        GameObject gameInfo = GameObject.Find("GameInfo");
-        Text gametext = gameInfo.transform.Find("Text").GetComponent<Text>();
-        gametext.text = (turn + 1) + "ターン目 " + (turnPlayer+1) + "Pの番";
+       // playerInfo.transform.Find("Field").GetComponent<Text>().text = "場 "+Players[turnPlayer].FieldList.Count + "枚";
+        //GameObject gameInfo = GameObject.Find("GameInfo");
+        //Text gametext = gameInfo.transform.Find("Text").GetComponent<Text>();
+        //gametext.text = (turn + 1) + "ターン目 " + (turnPlayer+1) + "Pの番";
 
     }
     void ScoreUpdate()
@@ -295,10 +306,27 @@ public class GameManager : MonoBehaviour {
     {
         for (int i = 0; i < Players[turnPlayer].HandsList.Count; i++)
         {
-            if (i != selectedHand)
+            Card card = Players[turnPlayer].HandsList[i].GetComponent<Card>();
+            if (card.Id >= 6 && card.Id <= 10)
             {
-                Players[turnPlayer].HandsList[i].transform.Find("Arrow").GetComponent<Image>().enabled = false;
-                Players[turnPlayer].HandsList[i].transform.localScale = new Vector3(1.0f, 1.0f);
+                switch (card.Id)
+                {
+                    case 6:
+                        card.CalcNum = card.Num + Players[turnPlayer].DeckList.Count; break;
+                    case 7:
+                        card.CalcNum = card.Num + Players[turnPlayer].TrashList.Count; break;
+                    case 9:
+                        card.CalcNum = card.Num + Players[turnPlayer].HandsList.Count-1; break;
+                    case 10:
+                        card.CalcNum = card.Num + Players[turnPlayer].FieldList.Count; break;
+                }
+                Text num = Players[turnPlayer].HandsList[i].transform.Find("Card").transform.Find("Number").GetComponent<Text>(); ;
+                num.text = card.CalcNum.ToString();
+            }
+            if (turnEndButton || i != selectedHand)
+            {
+                Players[turnPlayer].HandsList[i].transform.Find("Card").transform.Find("Arrow").GetComponent<Image>().enabled = false;
+                Players[turnPlayer].HandsList[i].transform.Find("Card").transform.localScale = new Vector3(0.4f, 0.4f);
                 
                 if (i < selectedHand)
                 {
@@ -311,10 +339,19 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                Players[turnPlayer].HandsList[selectedHand].transform.Find("Arrow").GetComponent<Image>().enabled = true;
-                Players[turnPlayer].HandsList[selectedHand].transform.localScale = new Vector3(1.2f, 1.2f);
-                Players[turnPlayer].HandsList[selectedHand].transform.SetAsLastSibling();
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.Find("Arrow").GetComponent<Image>().enabled = true;
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.localScale = new Vector3(0.45f, 0.45f);
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.SetAsLastSibling();
             }
+        }
+        if (turnEndButton)
+        {
+            GameObject.Find("TurnChange").transform.Find("Cursor").GetComponent<Image>().enabled = true;
+
+        }
+        else
+        {
+            GameObject.Find("TurnChange").transform.Find("Cursor").GetComponent<Image>().enabled = false;
         }
        
     }
@@ -341,7 +378,7 @@ public class GameManager : MonoBehaviour {
     {
         for(int i=0;i<Players.Count;i++)
         {
-            if (i!=turnPlayer && Players[i].HandsList.Count != 0)
+            if (i!=turnPlayer && Players[i].HandsList.Count >= 3)
             {
                 Players[i].Handeath();
             }
@@ -387,16 +424,8 @@ public class GameManager : MonoBehaviour {
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
-            case 6:
-                Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].DeckList.Count; break;
-            case 7:
-                Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].TrashList.Count; break;
-            case 9:
-                Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].HandsList.Count; break;
-            case 10:
-                Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num += Players[turnPlayer].FieldList.Count; break;
-        }
-        Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().Num;
+            }
+        Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
 
     }
 
@@ -416,6 +445,7 @@ public class GameManager : MonoBehaviour {
     }
     void TurnChange()
     {
+        turnEndButton = false;
         ScoreUpdate();
         turnCount = 0;
         turn++;
