@@ -7,19 +7,19 @@ public class CursorMove : MonoBehaviour {
 
     [SerializeField]
     private Vector3 StartButton_pos = Vector2.zero;
-
+    /*
     [SerializeField]
     private Vector3 RuleButton_pos = Vector2.zero;
-
+    */
     [SerializeField]
     private Vector3 ExitButton_pos = Vector2.zero;
-
+    
     [SerializeField]
     private string StartSceneName;
-
+    /*
     [SerializeField]
     private string RuleSceneName;
-
+    */
     private bool isKeyDown;
 
     AxisKeyManager axiskeymanager = new AxisKeyManager();
@@ -41,14 +41,17 @@ public class CursorMove : MonoBehaviour {
         }
         
         int AxisValue = axiskeymanager.GetVerticalKeyDown(ref isKeyDown,"1");
-        
+
+        /*
         if (AxisValue == 1) {
             if (this.transform.localPosition == StartButton_pos) {
                 this.transform.localPosition = ExitButton_pos;
             }
+            
             else if (this.transform.localPosition == RuleButton_pos) {
                 this.transform.localPosition = StartButton_pos;
             }
+            
             else if (this.transform.localPosition == ExitButton_pos) {
                 this.transform.localPosition = RuleButton_pos;
             }
@@ -57,7 +60,18 @@ public class CursorMove : MonoBehaviour {
             if (this.transform.localPosition == StartButton_pos) {
                 this.transform.localPosition = RuleButton_pos;
             }
+            
             else if (this.transform.localPosition == RuleButton_pos) {
+                this.transform.localPosition = ExitButton_pos;
+            }
+            
+            else if (this.transform.localPosition == ExitButton_pos) {
+                this.transform.localPosition = StartButton_pos;
+            }
+        }
+        */
+        if (AxisValue == 1 || AxisValue == -1) {
+            if (this.transform.localPosition == StartButton_pos) {
                 this.transform.localPosition = ExitButton_pos;
             }
             else if (this.transform.localPosition == ExitButton_pos) {
@@ -71,9 +85,11 @@ public class CursorMove : MonoBehaviour {
                 GameState.Instance.Init();
                 SceneManager.LoadScene(StartSceneName);
             }
+            /*
             else if (this.transform.localPosition == RuleButton_pos) {
                 SceneManager.LoadScene(RuleSceneName);
             }
+            */
             else if (this.transform.localPosition == ExitButton_pos) {
                 Application.Quit();
                 Debug.Log("Application Quit");
