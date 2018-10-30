@@ -80,6 +80,8 @@ public class Player:MonoBehaviour
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
             }*/
             cardObject.GetComponent<RectTransform>().localScale = new Vector3(0.45f, 0.45f, 0.45f);
+            //cloneObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            //cloneObject.GetComponent<RectTransform>().localScale = new Vector2(1, 1);
             DeckList.Add(cloneObject);
 
         }
@@ -139,7 +141,7 @@ public class Player:MonoBehaviour
         GameObject miniCard = HandsList[n].transform.Find("MiniCard").gameObject;
         miniCard.SetActive(true);
         miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
-        miniCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-159.4f+20*FieldList.Count-1, 169.5f - 30.1f * (Num-1));
+        miniCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-159.4f+20*FieldList.Count-1, 167f - 29.5f * (Num-1));
         if (TurnPlayer)
         {
             HideHand(n);
@@ -209,20 +211,20 @@ public class Player:MonoBehaviour
     {
         if (HandsList.Count != 0)
         {
+            float width = HandsList[0].transform.Find("Card").GetComponent<RectTransform>().sizeDelta.x;
             if (HandsList.Count <= 3)
             {
-                float width = HandsList[0].GetComponent<RectTransform>().sizeDelta.x;
                 for (int i = 0; i < HandsList.Count; i++)
                 {
-                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + (width+10) * i, -133f);
+                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + (width * 0.4f + 10) * i, -140f);
                 }
             }
             else
             {
-                float width = HandsList[0].GetComponent<RectTransform>().sizeDelta.x;
+                
                 for (int i = 0; i < HandsList.Count; i++)
                 {
-                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + i * (width+10) * 3 / (HandsList.Count), -133f);
+                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + i * (width*0.4f+10)  * 3 / (HandsList.Count), -140f);
                     
                 }
             }
