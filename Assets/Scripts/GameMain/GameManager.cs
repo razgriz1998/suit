@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour {
                     if (nextPlayer)
                     {
                         turnCount++;
+                        turnEndButton = false;
                         Players[turnPlayer].HideHands();
                         turnPlayer = (turnPlayer + 1) % Players.Count;
 
