@@ -6,59 +6,41 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour {
     private int[,] score;
-    private int[] finalScore;
-    private int[] rank;
+    private List<int> winners=new List<int>();
     // Use this for initialization
     void Start() {
         GameManager gameManager = GameManager.Instance;
         score = gameManager.Score;
-        finalScore = new int[score.GetLength(0)];
-        rank = new int[score.GetLength(0)];
-        for (int i = 0; i < score.GetLength(0); i++)
+        for (int i = 0; i < 4; i++)
         {
-            finalScore[i] = score[i, score.GetLength(1) - 1];
-        }
-        List<int> top = new List<int>();
-        bool[] comp = new bool[score.GetLength(0)];
-        for (int i = 0; i < comp.Length; i++)
-        {
-            comp[i] = false;
-        }
-        for (int r = 0; r < score.GetLength(0);)
-        {
-            int min = 1000;
-            for (int i = 0; i < score.GetLength(0); i++)
+            for( int j = 0; j < 6; j++)
             {
-                if (!comp[i])
-                {
-                    if (min > finalScore[i])
-                    {
-                        top.Clear();
-                        top.Add(i);
-                        min = finalScore[i];
-                    }
-                    else if (min == finalScore[i])
-                    {
-                        top.Add(i);
-                    }
-                }
+                Text scoreText = transform.Find("score" + i.ToString() + j.ToString()).GetComponent<Text>();
+                scoreText.text = score[i, j].ToString();
             }
-            foreach (int t in top)
-            {
-                rank[t] = r + 1;
-                comp[t] = true;
-            }
-            r += top.Count;
         }
 
-        
 
-        Text text = GetComponent<Text>();
-        text.text = "";
+        int min=10000;
         for (int i = 0; i < score.GetLength(0); i++)
         {
-            text.text += rank[i] + "位 " + (i + 1) + "P " + finalScore[i] + "ポイント\n";
+            int finalScore= score[i, score.GetLength(1) - 1];
+            if (min > finalScore)
+            {
+                min = finalScore;
+                winners.Clear();
+                winners.Add(i + 1);
+            }
+            else if(min == finalScore)
+            {
+                winners.Add(i + 1);
+            }
         }
+        Text winnerText = transform.Find("Winner").GetComponent<Text>();
+        foreach (int winner in winners) {
+            winnerText.text += winner + "P ";
+        }
+        winnerText.text += " WIN!";
     }
 	// Update is called once per frame
 	void Update () {

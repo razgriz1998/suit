@@ -114,6 +114,8 @@ public class GameManager : MonoBehaviour {
                                     text.text = Players[i].TotalScore.ToString();
                                     Score[i, turnNum] = Players[i].TotalScore;
                                 }
+
+                                SceneManager.LoadScene(nextScene);
                             }
                             else
                             {
