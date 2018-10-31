@@ -45,10 +45,12 @@ public class AxisKeyManager : MonoBehaviour {
 
         if (Input.GetAxis("Horizontal" + controller_num) == 1.0f && !isKeyDown) {
             isKeyDown = true;
+            Debug.Log("player" + controller_num + "Right");
             return 1;
         }
         else if (Input.GetAxis("Horizontal" + controller_num) == -1.0f && !isKeyDown) {
             isKeyDown = true;
+            Debug.Log("player" + controller_num + "Left");
             return -1;
         }
         else {

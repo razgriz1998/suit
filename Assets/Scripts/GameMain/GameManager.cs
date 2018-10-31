@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (pause)
             {
-                Debug.Log(pauseSelected);
+                //Debug.Log(pauseSelected);
                 if (Key())
                 {
                     if (decide)
@@ -181,16 +181,19 @@ public class GameManager : MonoBehaviour {
             isKeyDown = false;
         }
 
+        int horizontal_value = axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
+        int vertical_value = axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
+
         if (!pause)
         {   
             //カーソル右
-            if (Input.GetKeyDown(KeyCode.D) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
+            if (Input.GetKeyDown(KeyCode.D) || horizontal_value == 1)
             {
                 selectedHand = (++selectedHand) % handCount;
                 return true;
             }
             //カーソル右
-            else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, turnPlayer.ToString()) == -1)
+            else if (Input.GetKeyDown(KeyCode.A) || horizontal_value == -1)
             {
                 --selectedHand;
                 if (selectedHand == -1)
@@ -199,6 +202,7 @@ public class GameManager : MonoBehaviour {
                 }
                 return true;
             }
+            //決定
             else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString()))
             {
                 if (turnEndButton)
@@ -212,14 +216,14 @@ public class GameManager : MonoBehaviour {
 
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S) ||
-                    axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1 ||
-                    axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
+            //カーソル上下
+            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S) || vertical_value == 1 || vertical_value == -1)
             {
                 turnEndButton = !turnEndButton;
                 Debug.Log(turnEndButton);
                 return true;
             }
+            //ポーズ
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Pause" + (turnPlayer + 1).ToString()))
             {
                 pause = true;
@@ -230,12 +234,12 @@ public class GameManager : MonoBehaviour {
         //ポーズ中
         else
         {
-            if (Input.GetKeyDown(KeyCode.W) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
+            if (Input.GetKeyDown(KeyCode.W) || vertical_value == 1)
             {
                 pauseSelected = (++pauseSelected) % numPauseText;
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.S) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
+            else if (Input.GetKeyDown(KeyCode.S) || vertical_value == -1)
             {
                 --pauseSelected;
                 if (pauseSelected == -1)

@@ -31,6 +31,12 @@ public class Deck_CursorMove : MonoBehaviour {
 
     AxisKeyManager axiskeymanger;
 
+    [SerializeField]
+    private AudioSource SE_decide;
+
+    [SerializeField]
+    private AudioSource SE_cancel;
+
 	// Use this for initialization
 	void Start () {
         if (player_num == 1) {
@@ -76,7 +82,7 @@ public class Deck_CursorMove : MonoBehaviour {
                     else if (this.transform.localPosition == black_deck_pos) {
                         GameState.Instance.deck_type[player_num - 1] = 0;
                     }
-
+                    SE_decide.PlayOneShot(SE_decide.clip);
                     DecidedObj.SetActive(true);
                     GameState.Instance.isSetDeck++;
                     isDecide = true;
@@ -86,6 +92,7 @@ public class Deck_CursorMove : MonoBehaviour {
 
                 //キャンセル
                 if (Input.GetButtonDown("Cancel" + player_num)) {
+                    SE_cancel.PlayOneShot(SE_cancel.clip);
                     DecidedObj.SetActive(false);
                     GameState.Instance.isSetDeck--;
                     isDecide = false;

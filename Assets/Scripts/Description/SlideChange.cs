@@ -11,16 +11,20 @@ public class SlideChange : MonoBehaviour {
     public string next_scene_name;
     public Text slidenum_text;
 
-    private int count;
+    private int page_num;
     private bool isKeyDown;
+
     AxisKeyManager axiskeymanger;
+
+    private AudioSource SE_pagechange;
 
     // Use this for initialization
     void Start () {
         axiskeymanger = new AxisKeyManager();
         obj[0].SetActive(true);
         slidenum_text.text = "( 1 / " + obj.Length + " )";
-        count = 0;
+        page_num = 0;
+        SE_pagechange = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -34,23 +38,29 @@ public class SlideChange : MonoBehaviour {
         int AxisValue = axiskeymanger.GetHorizontalKeyDown(ref isKeyDown, "1");
 
         if (AxisValue == 1) {
-            if(count < obj.Length - 1) {
-                count++;
-                obj[count].SetActive(true);
-                obj[count - 1].SetActive(false);
-                slidenum_text.text = "( " + (count + 1) + " / " + obj.Length + " )";
+
+            SE_pagechange.PlayOneShot(SE_pagechange.clip);
+
+            if(page_num < obj.Length - 1) {
+                page_num++;
+                obj[page_num].SetActive(true);
+                obj[page_num - 1].SetActive(false);
+                slidenum_text.text = "( " + (page_num + 1) + " / " + obj.Length + " )";
             }
             else {
                 SceneManager.LoadScene(next_scene_name);
             }
         }
         else if (AxisValue == -1) {
-            if (count > 0) {
-                count--;
-                obj[count].SetActive(true);
-                obj[count + 1].SetActive(false);
+
+            SE_pagechange.PlayOneShot(SE_pagechange.clip);
+
+            if (page_num > 0) {
+                page_num--;
+                obj[page_num].SetActive(true);
+                obj[page_num + 1].SetActive(false);
                 
-                slidenum_text.text = "( " + (count + 1) + " / " + obj.Length + " )";
+                slidenum_text.text = "( " + (page_num + 1) + " / " + obj.Length + " )";
                 
             }
             else {
