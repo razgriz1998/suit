@@ -20,6 +20,9 @@ public class Player:MonoBehaviour
     public List<GameObject> HandsList { get; private set; }
     public List<GameObject> FieldList { get; private set; }
     public List<GameObject> TrashList { get; private set; }
+    private bool drawing=false;//ドローのアニメーション中かどうか
+    private float drawTime = 0f;
+    private List<float> handsStartPos=new List<float>();//ドローアニメーション開始位置の記録
     [SerializeField]
     private GameObject Hands,Deck,Field,Trash,gameManager;
     private List<Sprite> miniCardSprites;
@@ -89,6 +92,7 @@ public class Player:MonoBehaviour
                 num.rectTransform.sizeDelta = new Vector2(75.3f, 145.8f);
                 num.rectTransform.anchoredPosition = new Vector2(0f, 86.7f);
             }*/
+            cardObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(494, -140);
             cardObject.GetComponent<RectTransform>().localScale = new Vector3(0.45f, 0.45f, 0.45f);
             //cloneObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
             //cloneObject.GetComponent<RectTransform>().localScale = new Vector2(1, 1);
@@ -108,6 +112,11 @@ public class Player:MonoBehaviour
         {
             miniCardSprites = gameManager.GetComponent<SpriteReader>().miniCardSprites;
         }
+        if (drawing)
+        {
+            
+            HandsUpdateAnime();
+        }
     }
 
     public void DeckShuffle()
@@ -124,7 +133,14 @@ public class Player:MonoBehaviour
                 DeckList[r] = DeckList[i];
                 DeckList[i] = myGo;
             }
-            HandsUpdate();
+            if (TurnPlayer && !drawing)
+            {
+                HandsAnimeStart();
+            }
+            else
+            {
+                HandsUpdate();
+            }
         }
     }
 
@@ -138,9 +154,19 @@ public class Player:MonoBehaviour
             {
                 DeckList[0].transform.Find("Card").gameObject.SetActive(true);
             }
+            
             HandsList.Add(DeckList[0]);
+
+            
             DeckList.RemoveAt(0);
-            HandsUpdate();
+            if (TurnPlayer)
+            {
+                HandsAnimeStart();
+            }
+            else
+            {
+                HandsUpdate();
+            }
         }
     }
 
@@ -172,7 +198,14 @@ public class Player:MonoBehaviour
         }
         FieldList.Add(HandsList[n]);
         HandsList.RemoveAt(n);
-        HandsUpdate();
+        if (TurnPlayer)
+        {
+            HandsAnimeStart();
+        }
+        else
+        {
+            HandsUpdate();
+        }
 
         EndThisTurn = true;
     }
@@ -189,7 +222,14 @@ public class Player:MonoBehaviour
         Draw();
         NormalPoint = 0;
         SpecialPoint = 0;
-        HandsUpdate();
+        if (TurnPlayer)
+        {
+            HandsAnimeStart();
+        }
+        else
+        {
+            HandsUpdate();
+        }
         EndThisTurn = false;
     }
 
@@ -204,6 +244,7 @@ public class Player:MonoBehaviour
         foreach(GameObject go in HandsList)
         {
             go.transform.parent = Deck.transform;
+            go.transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(494, -140);
         }
 
         if (TurnPlayer)
@@ -227,30 +268,85 @@ public class Player:MonoBehaviour
             DeckList.Add(HandsList[card]);
             DeckShuffle();
             HandsList.RemoveAt(card);
-            HandsUpdate();  
+            if (TurnPlayer)
+            {
+                HandsAnimeStart();
+            }
+            else
+            {
+                HandsUpdate();
+            }
+        }
+    }
+
+    public void HandsAnimeStart()
+    {
+        Debug.Log("はい");
+        drawTime = Time.time;
+        drawing = true;
+        handsStartPos.Clear();
+        for (int i = 0; i < HandsList.Count; i++)
+        {
+            Debug.Log(HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition.x);
+            handsStartPos.Add(HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition.x);
+        }
+    }
+
+    public void HandsUpdateAnime()
+    {
+        Debug.Log("はいはい");
+        if (HandsList.Count != 0)
+        {
+            float width = HandsList[0].transform.Find("Card").GetComponent<RectTransform>().sizeDelta.x;
+                drawing = false;
+
+                for (int i = 0; i < HandsList.Count; i++)
+                {
+                    float target;
+                    if (HandsList.Count <= 3)
+                    {
+                        target = 82f + (width * 0.4f + 10) * i;
+                    }
+                    else
+                    {
+                        target = 82f + i * (width * 0.4f + 10) * 3 / (HandsList.Count);
+                    }
+                    if (handsStartPos.Count <= i)
+                    {
+                    
+                    handsStartPos.Add(HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition.x);
+                    }
+                    float newPosition = Mathf.SmoothStep(handsStartPos[i],
+                         target, (Time.time - drawTime) * 1.3f);
+                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(newPosition, -140f);
+
+                    if (target != newPosition)
+                    {
+                        drawing = true;
+                    }
+                }
+            
         }
     }
 
     public void HandsUpdate()
     {
+        Debug.Log("はいはいはい");
         if (HandsList.Count != 0)
         {
             float width = HandsList[0].transform.Find("Card").GetComponent<RectTransform>().sizeDelta.x;
-            if (HandsList.Count <= 3)
+            for (int i = 0; i < HandsList.Count; i++)
             {
-                for (int i = 0; i < HandsList.Count; i++)
+                float target;
+                if (HandsList.Count <= 3)
                 {
-                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + (width * 0.4f + 10) * i, -140f);
+                    target = 82f + (width * 0.4f + 10) * i;
                 }
-            }
-            else
-            {
-                
-                for (int i = 0; i < HandsList.Count; i++)
+                else
                 {
-                    HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(82f + i * (width*0.4f+10)  * 3 / (HandsList.Count), -140f);
-                    
+                    target = 82f + i * (width * 0.4f + 10) * 3 / (HandsList.Count);
                 }
+                HandsList[i].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(target, -140f);
             }
         }
     }
