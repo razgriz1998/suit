@@ -20,6 +20,13 @@ public class CursorMove : MonoBehaviour {
     [SerializeField]
     private string RuleSceneName;
     */
+
+    [SerializeField]
+    private AudioSource SE_cursor_move;
+
+    [SerializeField]
+    private AudioSource SE_decide;
+
     private bool isKeyDown;
 
     AxisKeyManager axiskeymanager = new AxisKeyManager();
@@ -77,10 +84,15 @@ public class CursorMove : MonoBehaviour {
             else if (this.transform.localPosition == ExitButton_pos) {
                 this.transform.localPosition = StartButton_pos;
             }
+            SE_cursor_move.PlayOneShot(SE_cursor_move.clip);
+
         }
 
         //シーンチェンジ
         if (Input.GetButtonDown("Submit1")){
+
+            SE_decide.PlayOneShot(SE_decide.clip);
+
             if (this.transform.localPosition == StartButton_pos) {
                 GameState.Instance.Init();
                 SceneManager.LoadScene(StartSceneName);
