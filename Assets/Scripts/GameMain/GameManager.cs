@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     private string nextScene;
 
+    private bool isKeyDown;
+    AxisKeyManager axiskeymanager;
+
     // Use this for initialization
     void Start () {
         cardSprites = new List<Sprite> {drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
@@ -56,6 +59,7 @@ public class GameManager : MonoBehaviour {
         HandUpdate();
         InfoUpdate();
         pauseSelected = 0;
+        axiskeymanager = new AxisKeyManager();
     }
 
 
@@ -137,14 +141,21 @@ public class GameManager : MonoBehaviour {
         nextPlayer = false;
         decide = false;
         int handCount = Players[turnPlayer].HandsList.Count;
+
+        if (Input.GetAxis("Vertical" + (turnPlayer + 1).ToString() ) == 0 && Input.GetAxis("Horizontal" + (turnPlayer + 1).ToString()) == 0) {
+            isKeyDown = false;
+        }
+
         if (!pause)
-        {
-            if (Input.GetKeyDown(KeyCode.D))
+        {   
+            //カーソル右
+            if (Input.GetKeyDown(KeyCode.D) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
             {
                 selectedHand = (++selectedHand) % handCount;
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.A))
+            //カーソル右
+            else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, turnPlayer.ToString()) == -1)
             {
                 --selectedHand;
                 if (selectedHand == -1)
@@ -153,7 +164,7 @@ public class GameManager : MonoBehaviour {
                 }
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.Return))
+            else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString()))
             {
                 if (turnEndButton)
                 {
@@ -166,27 +177,30 @@ public class GameManager : MonoBehaviour {
 
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S))
+            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S) ||
+                    axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1 ||
+                    axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
                 turnEndButton = !turnEndButton;
                 Debug.Log(turnEndButton);
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.Escape))
+            else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Pause" + (turnPlayer + 1).ToString()))
             {
                 pause = true;
                 pauseSelected = 0;
                 return true;
             }
         }
+        //ポーズ中
         else
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.W) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
             {
                 pauseSelected = (++pauseSelected) % numPauseText;
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            else if (Input.GetKeyDown(KeyCode.S) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
                 --pauseSelected;
                 if (pauseSelected == -1)
@@ -195,12 +209,12 @@ public class GameManager : MonoBehaviour {
                 }
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.Return))
+            else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString())) 
             {
                 decide = true;
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.Escape))
+            else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Cancel" + (turnPlayer + 1).ToString()))
             {
                 pause = false; 
                 return true;
