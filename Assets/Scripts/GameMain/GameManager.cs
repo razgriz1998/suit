@@ -150,7 +150,9 @@ public class GameManager : MonoBehaviour {
             //カーソル右
             if (Input.GetKeyDown(KeyCode.D) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
             {
-                audioSource.PlayOneShot(cardPickAudio);
+                audioSource.clip = cardPickAudio;
+                audioSource.time = 0.3f;
+                audioSource.Play();
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     selectedHand = (++selectedHand) % handCount;
@@ -161,7 +163,9 @@ public class GameManager : MonoBehaviour {
             //カーソル右
             else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
-                audioSource.PlayOneShot(cardPickAudio);
+                audioSource.clip = cardPickAudio;
+                audioSource.time = 0.3f;
+                audioSource.Play();
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     --selectedHand;
@@ -175,7 +179,9 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString()))
             {
-                audioSource.PlayOneShot(cardPickAudio);
+                audioSource.clip = cardPickAudio;
+                audioSource.time = 0.3f;
+                audioSource.Play();
                 if (turnEndButton)
                 {
                     nextPlayer = true;
@@ -191,7 +197,9 @@ public class GameManager : MonoBehaviour {
                     axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1 ||
                     axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
-                audioSource.PlayOneShot(cardPickAudio);
+                audioSource.clip = cardPickAudio;
+                audioSource.time = 0.3f;
+                audioSource.Play(); 
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     turnEndButton = !turnEndButton;
