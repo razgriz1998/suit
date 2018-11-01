@@ -137,7 +137,6 @@ public class Player:MonoBehaviour
             if (TurnPlayer)
             {
                 DeckList[0].transform.Find("Card").gameObject.SetActive(true);
-                Debug.Log(DeckList[0].GetComponent<Card>().Num);
             }
             HandsList.Add(DeckList[0]);
             DeckList.RemoveAt(0);
@@ -151,7 +150,22 @@ public class Player:MonoBehaviour
         GameObject miniCard = HandsList[n].transform.Find("MiniCard").gameObject;
         miniCard.SetActive(true);
         miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
-        miniCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-159.4f+20*FieldList.Count-1, 167f - 29.5f * (Num-1));
+        int space=20;
+        int maxMini = 5;
+        if (FieldList.Count < maxMini)
+        {
+            miniCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-159.4f + space * FieldList.Count, 167f - 29.5f * (Num - 1));
+        }
+        else
+        {
+            int x = space * (maxMini - 1) / (FieldList.Count - 1) - space * (maxMini - 1) / FieldList.Count;
+            miniCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-159.4f + space * (maxMini-1), 167f - 29.5f * (Num - 1));
+            for(int i=0;i< FieldList.Count; i++)
+            {
+                RectTransform rt = FieldList[i].transform.Find("MiniCard").GetComponent<RectTransform>();
+                rt.anchoredPosition -= new Vector2((float)i*x, 0);
+            }
+        }
         if (TurnPlayer)
         {
             HideHand(n);

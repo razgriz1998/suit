@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour {
     private int playerNum = 4;
     private int turnCount = 0;
     private Animator playing = null;
+    private string playingName = null;
     private int frameCount=0;
     public bool pause { get; private set; }
     public int pauseSelected{ get; private set; }
@@ -77,10 +78,16 @@ public class GameManager : MonoBehaviour {
         if (!gameEnd)
         {
             
-            if(playing!=null && !playing.GetCurrentAnimatorStateInfo(0).IsName("Animation")&&frameCount!=0 )
+            if(playing != null&&playingName=="TurnChange" && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
             {
                 playing = null;
                 panel.GetComponent<Image>().enabled = false;
+            }
+            if (playing != null && playingName == "Card" && !playing.GetCurrentAnimatorStateInfo(0).IsName("Play"))//カードの効果処理
+            {
+                Debug.Log("a");
+                Play();
+                
             }
             if (!pause)
             {
@@ -89,50 +96,6 @@ public class GameManager : MonoBehaviour {
                     if (decide)
                     {
                         Play();
-                    }
-                    if (Players[turnPlayer].HandsList.Count == 0)
-                    {
-                        nextPlayer = true;
-                    }
-                    if (nextPlayer)
-                    {
-                        turnCount++;
-                        turnEndButton = false;
-                        Players[turnPlayer].HideHands();
-                        turnPlayer = (turnPlayer + 1) % Players.Count;
-
-                        if (turnCount == playerNum)//ターンチェンジ判定
-                        {
-                            TurnChange();
-                            if (turn == turnNum)//ゲーム終了
-                            {
-                                gameEnd = true;
-                                GameObject go = GameObject.Find("ScoreBoard");
-                                for (int i = 0; i < playerNum; i++)
-                                {
-                                    Text text = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
-                                    text.text = Players[i].TotalScore.ToString();
-                                    Score[i, turnNum] = Players[i].TotalScore;
-                                }
-
-                                SceneManager.LoadScene(nextScene);
-                            }
-                            else
-                            {
-                                Players[turnPlayer].ShowHands();
-
-                            }
-                        }
-                        else
-                        {
-                            Players[turnPlayer].ShowHands();
-                            ChangeTurnPlayer();
-                        }
-                    }
-                    if ((decide || nextPlayer) && !gameEnd)
-                    {
-                        selectedHand = 0;
-                        InfoUpdate();
                     }
                     if (!gameEnd)
                     {
@@ -349,12 +312,12 @@ public class GameManager : MonoBehaviour {
         }
         if (turnEndButton)
         {
-            GameObject.Find("TurnChange").transform.Find("Cursor").GetComponent<Image>().enabled = true;
+            GameObject.Find("TurnEndButton").transform.Find("Cursor").GetComponent<Image>().enabled = true;
 
         }
         else
         {
-            GameObject.Find("TurnChange").transform.Find("Cursor").GetComponent<Image>().enabled = false;
+            GameObject.Find("TurnEndButton").transform.Find("Cursor").GetComponent<Image>().enabled = false;
         }
        
     }
@@ -390,45 +353,97 @@ public class GameManager : MonoBehaviour {
 
     public void Play()
     {
-        int id = Players[turnPlayer].HandsList[selectedHand].GetComponent<Card>().Id;
-        Players[turnPlayer].Play(selectedHand);
-        switch (id)
+        if (!playing)
         {
-            case 0: Players[turnPlayer].Draw(); break;//ドロー
-            case 1:
-                Players[turnPlayer].Draw();//インフレ
-                AllBuff(1);
-                break;
-            case 2:
-                Players[turnPlayer].Draw();//デフレ
-                AllBuff(-1); break;
-            case 3:
+            playing = Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<Animator>();
+            playing.SetTrigger("play");
+            playingName = "Card";
+        }
+        else
+        {
+            playing = null;
+            int id = Players[turnPlayer].HandsList[selectedHand].GetComponent<Card>().Id;
+            Players[turnPlayer].Play(selectedHand);
+            switch (id)
+            {
+                case 0: Players[turnPlayer].Draw(); break;//ドロー
+                case 1:
+                    Players[turnPlayer].Draw();//インフレ
+                    AllBuff(1);
+                    break;
+                case 2:
+                    Players[turnPlayer].Draw();//デフレ
+                    AllBuff(-1); break;
+                case 3:
 
-                foreach (Player p in Players)
+                    foreach (Player p in Players)
+                    {
+                        p.AllHandsToDeck();
+                    }
+                    AllPlayerShaffle();//シャッフル
+                    for (int i = 0; i < 3; i++)
+                    {
+                        AllPlayerDraw();
+                    }
+                    break;
+                case 4://コイントス
+                    if (Random.Range(0, 2) == 0)
+                    {
+                        AllBuff(2);
+                        //Players[turnPlayer].SpecialPoint += 2;
+                    }
+                    else
+                    {
+                        AllBuff(-2);
+                        //Players[turnPlayer].SpecialPoint -= 2;
+                    }
+                    break;
+                case 5: Handeath(); break;//ハンデス
+            }
+            Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
+            if (Players[turnPlayer].HandsList.Count == 0)
+            {
+                nextPlayer = true;
+            }
+            if (nextPlayer)
+            {
+                turnCount++;
+                turnEndButton = false;
+                Players[turnPlayer].HideHands();
+                turnPlayer = (turnPlayer + 1) % Players.Count;
+
+                if (turnCount == playerNum)//ターンチェンジ判定
                 {
-                    p.AllHandsToDeck();
-                }
-                AllPlayerShaffle();//シャッフル
-                for (int i = 0; i < 3; i++)
-                {
-                    AllPlayerDraw();
-                }
-                break;
-            case 4://コイントス
-                if (Random.Range(0, 2) == 0)
-                {
-                    AllBuff(2);
-                    //Players[turnPlayer].SpecialPoint += 2;
+                    TurnChange();
+                    if (turn == turnNum)//ゲーム終了
+                    {
+                        gameEnd = true;
+                        GameObject go = GameObject.Find("ScoreBoard");
+                        for (int i = 0; i < playerNum; i++)
+                        {
+                            Text text = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
+                            text.text = Players[i].TotalScore.ToString();
+                            Score[i, turnNum] = Players[i].TotalScore;
+                        }
+
+                        SceneManager.LoadScene(nextScene);
+                    }
+                    else
+                    {
+                        Players[turnPlayer].ShowHands();
+
+                    }
                 }
                 else
                 {
-                    AllBuff(-2);
-                    //Players[turnPlayer].SpecialPoint -= 2;
+                    Players[turnPlayer].ShowHands();
+                    ChangeTurnPlayer();
                 }
-                break;
-            case 5: Handeath(); break;//ハンデス
             }
-        Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
+            selectedHand = 0;
+            InfoUpdate();
+            HandUpdate();
+        }
 
     }
 
@@ -444,6 +459,7 @@ public class GameManager : MonoBehaviour {
         GameObject go = GameObject.Find("TurnChange");
         playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
         playing.SetTrigger("start");
+        playingName = "TurnChange";
         panel.GetComponent<Image>().enabled = true;
     }
     void TurnChange()
