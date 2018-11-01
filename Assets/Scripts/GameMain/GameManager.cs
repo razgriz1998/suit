@@ -89,7 +89,6 @@ public class GameManager : MonoBehaviour {
             }
             if (playing != null && playingName == "Card" && !playing.GetCurrentAnimatorStateInfo(0).IsName("Play"))//カードの効果処理
             {
-                Debug.Log("a");
                 Play();
                 
             }
@@ -97,6 +96,10 @@ public class GameManager : MonoBehaviour {
             {
                 if (playing == null && Key())
                 {
+                    if (nextPlayer)
+                    {
+                        TurnEnd();
+                    }
                     if (decide)
                     {
                         Play();
@@ -126,13 +129,6 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-        else
-        {
-            if (Input.GetKeyDown(KeyCode.E)|| Input.GetKeyDown(KeyCode.Return))
-            {
-                SceneManager.LoadScene(nextScene);
-            }
-        }
         frameCount++;
 	}
 
@@ -151,18 +147,26 @@ public class GameManager : MonoBehaviour {
             //カーソル右
             if (Input.GetKeyDown(KeyCode.D) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
             {
-                selectedHand = (++selectedHand) % handCount;
-                return true;
+                if (Players[turnPlayer].HandsList.Count != 0)
+                {
+                    selectedHand = (++selectedHand) % handCount;
+                    return true;
+                }
+                return false;
             }
             //カーソル右
-            else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, turnPlayer.ToString()) == -1)
+            else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
-                --selectedHand;
-                if (selectedHand == -1)
+                if (Players[turnPlayer].HandsList.Count != 0)
                 {
-                    selectedHand = handCount - 1;
+                    --selectedHand;
+                    if (selectedHand == -1)
+                    {
+                        selectedHand = handCount - 1;
+                    }
+                    return true;
                 }
-                return true;
+                return false;
             }
             else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString()))
             {
@@ -181,9 +185,13 @@ public class GameManager : MonoBehaviour {
                     axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1 ||
                     axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
-                turnEndButton = !turnEndButton;
-                Debug.Log(turnEndButton);
-                return true;
+                if (Players[turnPlayer].HandsList.Count != 0)
+                {
+                    turnEndButton = !turnEndButton;
+                    Debug.Log(turnEndButton);
+                    return true;
+                }
+                return false;
             }
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Pause" + (turnPlayer + 1).ToString()))
             {
@@ -327,7 +335,6 @@ public class GameManager : MonoBehaviour {
         if (turnEndButton)
         {
             GameObject.Find("TurnEndButton").transform.Find("Cursor").GetComponent<Image>().enabled = true;
-
         }
         else
         {
@@ -369,6 +376,7 @@ public class GameManager : MonoBehaviour {
     {
         if (!playing)
         {
+            Debug.Log("a");
             playing = Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<Animator>();
             playing.SetTrigger("play");
             playingName = "Card";
@@ -417,42 +425,7 @@ public class GameManager : MonoBehaviour {
             Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
             if (Players[turnPlayer].HandsList.Count == 0)
             {
-                nextPlayer = true;
-            }
-            if (nextPlayer)
-            {
-                turnCount++;
-                turnEndButton = false;
-                Players[turnPlayer].HideHands();
-                turnPlayer = (turnPlayer + 1) % Players.Count;
-
-                if (turnCount == playerNum)//ターンチェンジ判定
-                {
-                    TurnChange();
-                    if (turn == turnNum)//ゲーム終了
-                    {
-                        gameEnd = true;
-                        GameObject go = GameObject.Find("ScoreBoard");
-                        for (int i = 0; i < playerNum; i++)
-                        {
-                            Text text = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
-                            text.text = Players[i].TotalScore.ToString();
-                            Score[i, turnNum] = Players[i].TotalScore;
-                        }
-
-                        SceneManager.LoadScene(nextScene);
-                    }
-                    else
-                    {
-                        Players[turnPlayer].ShowHands();
-
-                    }
-                }
-                else
-                {
-                    Players[turnPlayer].ShowHands();
-                    ChangeTurnPlayer();
-                }
+                turnEndButton = true;
             }
             selectedHand = 0;
             InfoUpdate();
@@ -504,6 +477,43 @@ public class GameManager : MonoBehaviour {
         {
             p.TurnChange();
         }
+    }
+
+    void TurnEnd()
+    {
+        turnCount++;
+        turnEndButton = false;
+        Players[turnPlayer].HideHands();
+        turnPlayer = (turnPlayer + 1) % Players.Count;
+
+        if (turnCount == playerNum)//ターンチェンジ判定
+        {
+            TurnChange();
+            if (turn == turnNum)//ゲーム終了
+            {
+                gameEnd = true;
+                GameObject go = GameObject.Find("ScoreBoard");
+                for (int i = 0; i < playerNum; i++)
+                {
+                    Text text = go.transform.Find((i + 1) + "PTotal").GetComponent<Text>();
+                    text.text = Players[i].TotalScore.ToString();
+                    Score[i, turnNum] = Players[i].TotalScore;
+                }
+
+                SceneManager.LoadScene(nextScene);
+            }
+            else
+            {
+                Players[turnPlayer].ShowHands();
+
+            }
+        }
+        else
+        {
+            Players[turnPlayer].ShowHands();
+            ChangeTurnPlayer();
+        }
+        InfoUpdate();
 
     }
 }
