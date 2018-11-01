@@ -30,8 +30,10 @@ public class GameManager : MonoBehaviour {
     public int pauseSelected{ get; private set; }
     private const int numPauseText = 2;
     [SerializeField]
-    GameObject panel;
-
+    private GameObject panel;
+    [SerializeField]
+    private AudioClip cancelAudio, cursolAudio, decisionAudio, cardPickAudio;
+    private AudioSource audioSource;
     [SerializeField]
     private Sprite drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
         handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite,handcountSprite,fieldcountSprite;
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour {
         {
             Players.Add(GameObject.Find("Player"+(i+1)).GetComponent<Player>());
         }
+        audioSource = GetComponent<AudioSource>();
         turnPlayer = turn;
         //HandUpdate();
         Players[turnPlayer].ShowHands();
@@ -147,6 +150,7 @@ public class GameManager : MonoBehaviour {
             //カーソル右
             if (Input.GetKeyDown(KeyCode.D) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
             {
+                audioSource.PlayOneShot(cardPickAudio);
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     selectedHand = (++selectedHand) % handCount;
@@ -157,6 +161,7 @@ public class GameManager : MonoBehaviour {
             //カーソル右
             else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
+                audioSource.PlayOneShot(cardPickAudio);
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     --selectedHand;
@@ -170,6 +175,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString()))
             {
+                audioSource.PlayOneShot(cardPickAudio);
                 if (turnEndButton)
                 {
                     nextPlayer = true;
@@ -185,6 +191,7 @@ public class GameManager : MonoBehaviour {
                     axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1 ||
                     axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
+                audioSource.PlayOneShot(cardPickAudio);
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     turnEndButton = !turnEndButton;
@@ -195,6 +202,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Pause" + (turnPlayer + 1).ToString()))
             {
+                audioSource.PlayOneShot(cancelAudio);
                 pause = true;
                 pauseSelected = 0;
                 return true;
@@ -205,11 +213,13 @@ public class GameManager : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.W) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
             {
+                audioSource.PlayOneShot(cursolAudio);
                 pauseSelected = (++pauseSelected) % numPauseText;
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.S) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
             {
+                audioSource.PlayOneShot(cursolAudio);
                 --pauseSelected;
                 if (pauseSelected == -1)
                 {
@@ -219,11 +229,13 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString())) 
             {
+                audioSource.PlayOneShot(decisionAudio);
                 decide = true;
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Cancel" + (turnPlayer + 1).ToString()))
             {
+                audioSource.PlayOneShot(cancelAudio);
                 pause = false; 
                 return true;
             }
