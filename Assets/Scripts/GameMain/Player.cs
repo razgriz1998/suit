@@ -20,7 +20,7 @@ public class Player:MonoBehaviour
     public List<GameObject> HandsList { get; private set; }
     public List<GameObject> FieldList { get; private set; }
     public List<GameObject> TrashList { get; private set; }
-    private bool drawing=false;//ドローのアニメーション中かどうか
+    public bool drawing { get; private set; }//ドローのアニメーション中かどうか
     private float drawTime = 0f;
     private List<float> handsStartPos=new List<float>();//ドローアニメーション開始位置の記録
     [SerializeField]
@@ -53,6 +53,7 @@ public class Player:MonoBehaviour
         FieldList = new List<GameObject>();
         TrashList = new List<GameObject>();
         TurnPlayer = false;
+        drawing = false;
         TextAsset csvFile = Resources.Load("DeckLists/Deck" + NumDeck) as TextAsset;
         StringReader reader = new StringReader(csvFile.text);
         while (reader.Peek() > -1)
@@ -281,7 +282,6 @@ public class Player:MonoBehaviour
 
     public void HandsAnimeStart()
     {
-        Debug.Log("はい");
         drawTime = Time.time;
         drawing = true;
         handsStartPos.Clear();
