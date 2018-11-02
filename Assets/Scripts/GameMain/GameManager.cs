@@ -98,23 +98,24 @@ public class GameManager : MonoBehaviour {
             }
             if (!pause)
             {
-                if (playing == null && Key())
+                if (!cardplaying)
                 {
-                    if (nextPlayer)
+                    if (playing == null && Key())
                     {
-                        TurnEnd();
+                        if (nextPlayer)
+                        {
+                            TurnEnd();
+                        }
+                        if (decide)
+                        {
+                            PlayAnime();
+                        }
+                        if (!gameEnd)
+                        {
+                            HandUpdate();
+                        }
+                        //HandUpdate();
                     }
-                    if (decide)
-                    {
-                        PlayAnime();
-                    }
-                    if (!gameEnd)
-                    {
-                        HandUpdate();
-                    }
-
-
-                    //HandUpdate();
                 }
             }
             else if (pause)
