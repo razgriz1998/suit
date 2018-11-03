@@ -65,7 +65,7 @@ public class Deck_CursorMove : MonoBehaviour {
 
                 int AxisValue = axiskeymanger.GetHorizontalKeyDown(ref isKeyDown, player_num.ToString());
 
-                if (AxisValue == 1 || AxisValue == -1) {
+                if (AxisValue == 1 || AxisValue == -1 || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) {
                     if (this.transform.localPosition == red_deck_pos) {
                         this.transform.localPosition = black_deck_pos;
                     }

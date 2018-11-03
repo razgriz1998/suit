@@ -34,6 +34,11 @@ public class CursorMove : MonoBehaviour {
     // Use this for initialization
     void Start() {
         this.transform.localPosition = StartButton_pos;
+
+        Cursor.visible = false;
+
+        //シングルトン初期化
+        GameState.Instance.Init();
     }
 
     // Update is called once per frame
@@ -77,7 +82,7 @@ public class CursorMove : MonoBehaviour {
             }
         }
         */
-        if (AxisValue == 1 || AxisValue == -1) {
+        if (AxisValue == 1 || AxisValue == -1 || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S)) {
             if (this.transform.localPosition == StartButton_pos) {
                 this.transform.localPosition = ExitButton_pos;
             }
@@ -94,7 +99,7 @@ public class CursorMove : MonoBehaviour {
             SE_decide.PlayOneShot(SE_decide.clip);
 
             if (this.transform.localPosition == StartButton_pos) {
-                GameState.Instance.Init();
+                
                 SceneManager.LoadScene(StartSceneName);
             }
             /*

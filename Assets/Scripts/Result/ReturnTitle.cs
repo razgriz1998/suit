@@ -13,7 +13,7 @@ public class ReturnTitle : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Submit1"))
         {
             SceneManager.LoadScene("Title");
         }

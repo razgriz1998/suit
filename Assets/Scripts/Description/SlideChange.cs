@@ -37,7 +37,7 @@ public class SlideChange : MonoBehaviour {
 
         int AxisValue = axiskeymanger.GetHorizontalKeyDown(ref isKeyDown, "1");
 
-        if (AxisValue == 1) {
+        if (AxisValue == 1 || Input.GetKeyDown(KeyCode.D)) {
 
             SE_pagechange.PlayOneShot(SE_pagechange.clip);
 
@@ -51,7 +51,7 @@ public class SlideChange : MonoBehaviour {
                 SceneManager.LoadScene(next_scene_name);
             }
         }
-        else if (AxisValue == -1) {
+        else if (AxisValue == -1 || Input.GetKeyDown(KeyCode.A)) {
 
             SE_pagechange.PlayOneShot(SE_pagechange.clip);
 

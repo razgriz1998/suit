@@ -30,7 +30,9 @@ public class GameState : Singleton<GameState> {
     //デッキ選択した人数（デッキ選択で4になればシーンチェンジ)
     public int isSetDeck = 0;
 
-    //初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public void Init() {
         isPause = false;
         for (int i = 0; i < 4; i++) {
