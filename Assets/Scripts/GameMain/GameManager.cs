@@ -147,10 +147,13 @@ public class GameManager : MonoBehaviour {
             isKeyDown = false;
         }
 
+        int horizontal_value = axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
+        int vertical_value = axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
+
         if (!pause)
         {   
             //カーソル右
-            if (Input.GetKeyDown(KeyCode.D) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
+            if (Input.GetKeyDown(KeyCode.D) || horizontal_value == 1)
             {
                 audioSource.clip = cardPickAudio;
                 audioSource.time = 0.3f;
@@ -163,7 +166,7 @@ public class GameManager : MonoBehaviour {
                 return false;
             }
             //カーソル右
-            else if (Input.GetKeyDown(KeyCode.A) || axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
+            else if (Input.GetKeyDown(KeyCode.A) || horizontal_value == -1)
             {
                 audioSource.clip = cardPickAudio;
                 audioSource.time = 0.3f;
@@ -195,9 +198,7 @@ public class GameManager : MonoBehaviour {
 
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S) ||
-                    axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1 ||
-                    axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
+            else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S) || vertical_value == 1 || vertical_value == -1)
             {
                 audioSource.clip = cardPickAudio;
                 audioSource.time = 0.3f;
@@ -221,13 +222,13 @@ public class GameManager : MonoBehaviour {
         //ポーズ中
         else
         {
-            if (Input.GetKeyDown(KeyCode.W) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == 1)
+            if (Input.GetKeyDown(KeyCode.W) || vertical_value == 1)
             {
                 audioSource.PlayOneShot(cursolAudio);
                 pauseSelected = (++pauseSelected) % numPauseText;
                 return true;
             }
-            else if (Input.GetKeyDown(KeyCode.S) || axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString()) == -1)
+            else if (Input.GetKeyDown(KeyCode.S) || vertical_value == -1)
             {
                 audioSource.PlayOneShot(cursolAudio);
                 --pauseSelected;
