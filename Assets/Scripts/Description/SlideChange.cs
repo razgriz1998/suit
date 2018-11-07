@@ -29,6 +29,10 @@ public class SlideChange : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (Input.GetKeyDown(KeyCode.End))//デバッグ用
+        {
+            SceneManager.LoadScene(next_scene_name);
+        }
 
         //カーソル操作
         if (Input.GetAxis("Horizontal1") == 0) {

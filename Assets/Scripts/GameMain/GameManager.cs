@@ -82,6 +82,11 @@ public class GameManager : MonoBehaviour {
 
     }
 
+    public void DestroyThis()
+    {
+        Destroy(gameObject);
+    }
+
     // Update is called once per frame
     void Update () {
         if (!gameEnd)
@@ -251,6 +256,10 @@ public class GameManager : MonoBehaviour {
                 return true;
             }
         }
+        if (Input.GetKeyDown(KeyCode.End))
+        {
+            SceneManager.LoadScene(nextScene);
+        }
         return false;
 }
     void InfoUpdate()
@@ -407,15 +416,18 @@ public class GameManager : MonoBehaviour {
         else
         {
             float target = 300f;
-            RectTransform rt = Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<RectTransform>();
-            float newPosition = Mathf.SmoothStep(-140f,
-                         target, (Time.time - cardplayTime)*1.3f);
-            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newPosition);
-            Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<Image>().color = new Color(1,1,1,1-(Time.time - cardplayTime) * 1.3f);
-            if (newPosition == target)
+            if (Players[turnPlayer].HandsList[selectedHand])
             {
-                cardplaying = false;
-                Play();
+                RectTransform rt = Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<RectTransform>();
+                float newPosition = Mathf.SmoothStep(-140f,
+                             target, (Time.time - cardplayTime) * 1.3f);
+                rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newPosition);
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<Image>().color = new Color(1, 1, 1, 1 - (Time.time - cardplayTime) * 1.3f);
+                if (newPosition == target)
+                {
+                    cardplaying = false;
+                    Play();
+                }
             }
         }
     }

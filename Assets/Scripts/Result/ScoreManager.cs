@@ -41,6 +41,8 @@ public class ScoreManager : MonoBehaviour {
             winnerText.text += winner + "P ";
         }
         winnerText.text += " WIN!";
+
+        gameManager.DestroyThis();
     }
 	// Update is called once per frame
 	void Update () {
