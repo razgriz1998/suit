@@ -72,6 +72,7 @@ public class Player:MonoBehaviour
             card.Id = intDatas[0];
             card.Num = intDatas[1];
             card.CalcNum = intDatas[1];
+            card.Count = card.GetThisName().Contains("カウント");
             cloneObject.transform.parent = Deck.transform;
             Text num = cardObject.transform.Find("Number").GetComponent<Text>();
             num.text = card.Num.ToString();
@@ -80,9 +81,9 @@ public class Player:MonoBehaviour
                 num.color = new Color(1, 1, 1);
             }
             Text name = cardObject.transform.Find("Name").GetComponent<Text>();
-            name.text = Card.Names[card.Id];
+            name.text = card.GetThisName();
             Text text = cardObject.transform.Find("Text").GetComponent<Text>();
-            text.text = Card.Texts[card.Id];
+            text.text = card.GetThisText();
             /*if (cloneObject.GetComponent<Card>().Num >= 10)
             {
                 num.rectTransform.sizeDelta = new Vector2(148.5f, 145.8f);

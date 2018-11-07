@@ -20,7 +20,7 @@ public class PauseCursorManager : MonoBehaviour {
         {
             gm = go.GetComponent<GameManager>();
         }
-        if (gm.pause&&gm.pauseSelected == num)
+        if (gm.Pause&&gm.PauseSelected == num)
         {
             GetComponent<Image>().enabled = true;
         }
