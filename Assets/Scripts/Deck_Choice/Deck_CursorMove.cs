@@ -101,7 +101,7 @@ public class Deck_CursorMove : MonoBehaviour {
 
             //ポーズ
             if (Input.GetButtonDown("Pause" + player_num)) {
-
+                GameState.Instance.pause_player = player_num;
                 PauseCanvas.SetActive(true);
                 GameState.Instance.isPause = true;
 
@@ -117,41 +117,43 @@ public class Deck_CursorMove : MonoBehaviour {
         //ポーズ中
         else {
 
-            //カーソル操作
-            if (Input.GetAxis("Vertical" + player_num) == 0) {
-                isKeyDown = false;
-            }
-
-            int AxisValue = axiskeymanger.GetVerticalKeyDown(ref isKeyDown, player_num.ToString());
-
-            if (AxisValue == 1 || AxisValue == -1) {
-                if (ContinueIcon.active) {
-                    ContinueIcon.SetActive(false);
-                    ExitIcon.SetActive(true);
+            if (player_num == GameState.Instance.pause_player) {
+                //カーソル操作
+                if (Input.GetAxis("Vertical" + player_num) == 0) {
+                    isKeyDown = false;
                 }
-                else if (ExitIcon.active) {
-                    ExitIcon.SetActive(false);
-                    ContinueIcon.SetActive(true);
+
+                int AxisValue = axiskeymanger.GetVerticalKeyDown(ref isKeyDown, player_num.ToString());
+
+                if (AxisValue == 1 || AxisValue == -1) {
+                    if (ContinueIcon.active) {
+                        ContinueIcon.SetActive(false);
+                        ExitIcon.SetActive(true);
+                    }
+                    else if (ExitIcon.active) {
+                        ExitIcon.SetActive(false);
+                        ContinueIcon.SetActive(true);
+                    }
                 }
-            }
 
-            //決定
-            if (Input.GetButtonDown("Submit" + player_num)) {
-                if (ContinueIcon.active) {
+                //決定
+                if (Input.GetButtonDown("Submit" + player_num)) {
+                    if (ContinueIcon.active) {
 
+                        PauseCanvas.SetActive(false);
+                        GameState.Instance.isPause = false;
+                    }
+                    else if (ExitIcon.active) {
+
+                        SceneManager.LoadScene("Title");
+                    }
+                }
+
+                //キャンセル
+                if (Input.GetButtonDown("Cancel" + player_num)) {
                     PauseCanvas.SetActive(false);
                     GameState.Instance.isPause = false;
                 }
-                else if (ExitIcon.active) {
-
-                    SceneManager.LoadScene("Title");
-                }
-            }
-
-            //キャンセル
-            if (Input.GetButtonDown("Cancel" + player_num)) {
-                PauseCanvas.SetActive(false);
-                GameState.Instance.isPause = false;
             }
         }
     }
