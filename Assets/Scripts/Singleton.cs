@@ -30,6 +30,9 @@ public class GameState : Singleton<GameState> {
     //デッキ選択した人数（デッキ選択で4になればシーンチェンジ)
     public int isSetDeck = 0;
 
+    //デッキ選択画面でポーズボタンを押したプレイヤー
+    public int pause_player = 1;
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -39,5 +42,6 @@ public class GameState : Singleton<GameState> {
             deck_type[i] = 0;
         }
         isSetDeck = 0;
+        pause_player = 1;
     }
 }

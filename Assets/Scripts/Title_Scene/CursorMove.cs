@@ -22,6 +22,9 @@ public class CursorMove : MonoBehaviour {
     */
 
     [SerializeField]
+    private int rotate_speed = 5;
+
+    [SerializeField]
     private AudioSource SE_cursor_move;
 
     [SerializeField]
@@ -45,7 +48,7 @@ public class CursorMove : MonoBehaviour {
     void Update() {
 
         //カーソルの回転アニメーション
-        transform.Rotate(5, 0, 0);
+        transform.Rotate(rotate_speed, 0, 0);
         
         //コントローラ操作
         if (Input.GetAxis("Vertical1") == 0 && Input.GetAxis("Horizontal1") == 0) {
