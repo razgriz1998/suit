@@ -30,6 +30,9 @@ public class CursorMove : MonoBehaviour {
     [SerializeField]
     private AudioSource SE_decide;
 
+    private bool isFirstRotate;
+    private int rotate_count;
+
     private bool isKeyDown;
 
     AxisKeyManager axiskeymanager = new AxisKeyManager();
@@ -40,15 +43,36 @@ public class CursorMove : MonoBehaviour {
 
         Cursor.visible = false;
 
+        rotate_count = 0;
+
+        isFirstRotate = true;
+
         //シングルトン初期化
         GameState.Instance.Init();
     }
 
     // Update is called once per frame
     void Update() {
-
+        
         //カーソルの回転アニメーション
-        transform.Rotate(rotate_speed, 0, 0);
+        Debug.Log(this.transform.localRotation.x);
+        if (Mathf.Abs(this.transform.localEulerAngles.x) <= 0.01f) {
+            if (isFirstRotate) {
+                rotate_count++;
+                if (rotate_count >= 30) {
+                    isFirstRotate = !isFirstRotate;
+                    rotate_count = 0;
+                    transform.Rotate(rotate_speed, 0, 0);
+                }
+            }
+            else {
+                isFirstRotate = !isFirstRotate;
+                transform.Rotate(rotate_speed, 0, 0);
+            }
+        }
+        else {
+            transform.Rotate(rotate_speed, 0, 0);
+        }
         
         //コントローラ操作
         if (Input.GetAxis("Vertical1") == 0 && Input.GetAxis("Horizontal1") == 0) {
