@@ -43,6 +43,12 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     private string nextScene;
 
+    [SerializeField]
+    private ParticleSystem point_change_effect;
+
+    [SerializeField]
+    private AudioClip point_change_Audio;
+
     private bool isKeyDown;
     AxisKeyManager axiskeymanager;
 
@@ -65,6 +71,8 @@ public class GameManager : MonoBehaviour {
         InfoUpdate();
         pauseSelected = 0;
         axiskeymanager = new AxisKeyManager();
+
+        point_change_effect.Stop();
     }
 
 
@@ -461,25 +469,34 @@ public class GameManager : MonoBehaviour {
             case 4://コイントス
                 if (Random.Range(0, 2) == 0)
                 {
+                    //コイントス表のアニメーション入れる
                     AllBuff(2);
                     //Players[turnPlayer].SpecialPoint += 2;
                 }
                 else
                 {
+                    //コイントス浦のアニメーション入れる
                     AllBuff(-2);
                     //Players[turnPlayer].SpecialPoint -= 2;
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
         }
-        Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
-            if (Players[turnPlayer].HandsList.Count == 0)
-            {
-                turnEndButton = true;
-            }
-            selectedHand = 0;
-            InfoUpdate();
-            HandUpdate();
+
+        //得点が変わったとき音を鳴らす
+        if (Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum != 0) 
+        {
+            point_change_effect.Play();
+            audioSource.PlayOneShot(point_change_Audio);
+            Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
+        }
+
+        if (Players[turnPlayer].HandsList.Count == 0) {
+            turnEndButton = true;
+        }
+        selectedHand = 0;
+        InfoUpdate();
+        HandUpdate();
 
     }
 

@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
+  - BackGround
   - 
   - 
   - 
@@ -38,9 +38,6 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
-    locked: 0
   - name: Back
     uniqueID: 2236047921
     locked: 0
@@ -49,4 +46,7 @@ TagManager:
     locked: 0
   - name: Tip
     uniqueID: 3238296353
+    locked: 0
+  - name: Default
+    uniqueID: 0
     locked: 0
