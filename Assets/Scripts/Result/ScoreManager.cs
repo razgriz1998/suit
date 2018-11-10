@@ -13,7 +13,7 @@ public class ScoreManager : MonoBehaviour {
         score = gameManager.Score;
         for (int i = 0; i < 4; i++)
         {
-            for( int j = 0; j < 6; j++)
+            for( int j = 0; j < 5; j++)
             {
                 Text scoreText = transform.Find("score" + i.ToString() + j.ToString()).GetComponent<Text>();
                 scoreText.text = score[i, j].ToString();

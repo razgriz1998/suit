@@ -15,7 +15,7 @@ public class PauseManager : MonoBehaviour {
         if(gm == null){
             gm = go.GetComponent<GameManager>();
         }
-        if (gm.pause)
+        if (gm.Pause)
         {
             GetComponent<Canvas>().enabled = true;
         }
