@@ -14,9 +14,9 @@ public class GameManager : MonoBehaviour {
     private int turnPlayer = 0;
     private int handMax = 7;
     private int selectedHand = 0;
-    public bool TurnEndButton { get; private set; }
+    private bool turnEndButton = false;
     private int turn = 0;
-    private int turnNum = 4;
+    private int turnNum = 5;
     private bool gameEnd = false;
     private bool nextPlayer = false;
     private bool decide = false;
@@ -28,9 +28,8 @@ public class GameManager : MonoBehaviour {
     private bool cardplaying = false;
     private float cardplayTime = 0f;
     private int frameCount=0;
-    public bool Pause { get; private set; }
-    public bool KeyInput { get; private set; }
-    public int PauseSelected{ get; private set; }
+    public bool pause { get; private set; }
+    public int pauseSelected{ get; private set; }
     private const int numPauseText = 2;
     [SerializeField]
     private GameObject panel;
@@ -44,12 +43,17 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     private string nextScene;
 
+    [SerializeField]
+    private ParticleSystem point_change_effect, inf_effect, def_effect;
+
+    [SerializeField]
+    private AudioClip point_change_Audio, inf_Audio, def_Audio;
+
     private bool isKeyDown;
     AxisKeyManager axiskeymanager;
 
     // Use this for initialization
     void Start () {
-        TurnEndButton = false;
         cardSprites = new List<Sprite> {drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
         handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite ,handcountSprite,fieldcountSprite};
         Players = new List<Player>();
@@ -65,8 +69,12 @@ public class GameManager : MonoBehaviour {
         ChangeTurnPlayer();
         HandUpdate();
         InfoUpdate();
-        PauseSelected = 0;
+        pauseSelected = 0;
         axiskeymanager = new AxisKeyManager();
+
+        point_change_effect.Stop();
+        inf_effect.Stop();
+        def_effect.Stop();
     }
 
 
@@ -103,14 +111,12 @@ public class GameManager : MonoBehaviour {
             {
                 PlayAnime();
             }
-            KeyInput = false;
-            if (!Pause)
+            if (!pause)
             {
                 if (!cardplaying)
                 {
                     if (playing == null && Key())
                     {
-                        KeyInput = true;
                         if (nextPlayer)
                         {
                             TurnEnd();
@@ -127,16 +133,16 @@ public class GameManager : MonoBehaviour {
                     }
                 }
             }
-            else if (Pause)
+            else if (pause)
             {
-                Debug.Log(PauseSelected);
-                if (KeyInput = Key())
+                Debug.Log(pauseSelected);
+                if (Key())
                 {
                     if (decide)
                     {
-                        switch (PauseSelected)
+                        switch (pauseSelected)
                         {
-                            case 0: Pause = false;break;
+                            case 0: pause = false;break;
                             case 1: SceneManager.LoadScene("title"); break;
                         }
                     }
@@ -159,7 +165,7 @@ public class GameManager : MonoBehaviour {
         int horizontal_value = axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
         int vertical_value = axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
 
-        if (!Pause)
+        if (!pause)
         {   
             //カーソル右
             if (Input.GetKeyDown(KeyCode.D) || horizontal_value == 1)
@@ -196,7 +202,7 @@ public class GameManager : MonoBehaviour {
                 audioSource.clip = cardPickAudio;
                 audioSource.time = 0.3f;
                 audioSource.Play();
-                if (TurnEndButton)
+                if (turnEndButton)
                 {
                     nextPlayer = true;
                 }
@@ -214,7 +220,8 @@ public class GameManager : MonoBehaviour {
                 audioSource.Play(); 
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
-                    TurnEndButton = !TurnEndButton;
+                    turnEndButton = !turnEndButton;
+                    Debug.Log(turnEndButton);
                     return true;
                 }
                 return false;
@@ -222,8 +229,8 @@ public class GameManager : MonoBehaviour {
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Pause" + (turnPlayer + 1).ToString()))
             {
                 audioSource.PlayOneShot(cancelAudio);
-                Pause = true;
-                PauseSelected = 0;
+                pause = true;
+                pauseSelected = 0;
                 return true;
             }
         }
@@ -233,16 +240,16 @@ public class GameManager : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.W) || vertical_value == 1)
             {
                 audioSource.PlayOneShot(cursolAudio);
-                PauseSelected = (++PauseSelected) % numPauseText;
+                pauseSelected = (++pauseSelected) % numPauseText;
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.S) || vertical_value == -1)
             {
                 audioSource.PlayOneShot(cursolAudio);
-                --PauseSelected;
-                if (PauseSelected == -1)
+                --pauseSelected;
+                if (pauseSelected == -1)
                 {
-                    PauseSelected = numPauseText - 1;
+                    pauseSelected = numPauseText - 1;
                 }
                 return true;
             }
@@ -255,7 +262,7 @@ public class GameManager : MonoBehaviour {
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Cancel" + (turnPlayer + 1).ToString()))
             {
                 audioSource.PlayOneShot(cancelAudio);
-                Pause = false; 
+                pause = false; 
                 return true;
             }
         }
@@ -346,7 +353,7 @@ public class GameManager : MonoBehaviour {
                 Text num = Players[turnPlayer].HandsList[i].transform.Find("Card").transform.Find("Number").GetComponent<Text>(); ;
                 num.text = card.CalcNum.ToString();
             }
-            if (TurnEndButton || i != selectedHand)
+            if (turnEndButton || i != selectedHand)
             {
                 Players[turnPlayer].HandsList[i].transform.Find("Card").transform.Find("Arrow").GetComponent<Image>().enabled = false;
                 Players[turnPlayer].HandsList[i].transform.Find("Card").transform.localScale = new Vector3(0.4f, 0.4f);
@@ -362,13 +369,12 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                Transform tf = GetSelectedCard().transform.Find("Card");
-                tf.transform.Find("Arrow").GetComponent<Image>().enabled = true;
-                tf.transform.localScale = new Vector3(0.45f, 0.45f);
-                tf.transform.SetAsLastSibling();
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.Find("Arrow").GetComponent<Image>().enabled = true;
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.localScale = new Vector3(0.45f, 0.45f);
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.SetAsLastSibling();
             }
         }
-        if (TurnEndButton)
+        if (turnEndButton)
         {
             GameObject.Find("TurnEndButton").transform.Find("Cursor").GetComponent<Image>().enabled = true;
         }
@@ -420,17 +426,16 @@ public class GameManager : MonoBehaviour {
         else
         {
             float target = 300f;
-            if (GetSelectedCard())
+            if (Players[turnPlayer].HandsList[selectedHand])
             {
-                RectTransform rt = GetSelectedCard().transform.Find("Card").GetComponent<RectTransform>();
+                RectTransform rt = Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<RectTransform>();
                 float newPosition = Mathf.SmoothStep(-140f,
                              target, (Time.time - cardplayTime) * 1.3f);
                 rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newPosition);
-                GetSelectedCard().transform.Find("Card").GetComponent<Image>().color = new Color(1, 1, 1, 1 - (Time.time - cardplayTime) * 1.3f);
+                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<Image>().color = new Color(1, 1, 1, 1 - (Time.time - cardplayTime) * 1.3f);
                 if (newPosition == target)
                 {
                     cardplaying = false;
-                    KeyInput = true;
                     Play();
                 }
             }
@@ -439,17 +444,21 @@ public class GameManager : MonoBehaviour {
 
     public void Play()
     {
-        int id = GetSelectedCard().GetComponent<Card>().Id;
+        int id = Players[turnPlayer].HandsList[selectedHand].GetComponent<Card>().Id;
         Players[turnPlayer].Play(selectedHand);
         switch (id)
         {
             case 0: Players[turnPlayer].Draw(); break;//ドロー
             case 1:
                 Players[turnPlayer].Draw();//インフレ
+                inf_effect.Play();
+                audioSource.PlayOneShot(inf_Audio);
                 AllBuff(1);
                 break;
             case 2:
                 Players[turnPlayer].Draw();//デフレ
+                def_effect.Play();
+                audioSource.PlayOneShot(def_Audio);
                 AllBuff(-1); break;
             case 3:
 
@@ -466,25 +475,38 @@ public class GameManager : MonoBehaviour {
             case 4://コイントス
                 if (Random.Range(0, 2) == 0)
                 {
+                    //コイントス表のアニメーション入れる
                     AllBuff(2);
+                    inf_effect.Play();
+                    audioSource.PlayOneShot(inf_Audio);
                     //Players[turnPlayer].SpecialPoint += 2;
                 }
                 else
                 {
+                    //コイントス浦のアニメーション入れる
                     AllBuff(-2);
+                    def_effect.Play();
+                    audioSource.PlayOneShot(def_Audio);
                     //Players[turnPlayer].SpecialPoint -= 2;
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
         }
-        Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
-            if (Players[turnPlayer].HandsList.Count == 0)
-            {
-                TurnEndButton = true;
-            }
-            selectedHand = 0;
-            InfoUpdate();
-            HandUpdate();
+
+        //得点が変わったとき
+        if (Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum != 0) 
+        {
+            point_change_effect.Play();
+            audioSource.PlayOneShot(point_change_Audio);
+            Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
+        }
+
+        if (Players[turnPlayer].HandsList.Count == 0) {
+            turnEndButton = true;
+        }
+        selectedHand = 0;
+        InfoUpdate();
+        HandUpdate();
 
     }
 
@@ -505,11 +527,27 @@ public class GameManager : MonoBehaviour {
     }
     void TurnChange()
     {
-        TurnEndButton = false;
+        turnEndButton = false;
         ScoreUpdate();
         turnCount = 0;
         turn++;
-        turnPlayer = turn;
+        if (turn < playerNum)//最終ターン以外
+        {
+            turnPlayer = turn;
+        }
+        else//最終ターン
+        {
+            int max = -1, index = 0;
+            for (int i = 0; i < playerNum; i++)
+            {
+                if (max < Players[i].TotalScore)
+                {
+                    max = Players[i].TotalScore;
+                    index = i;
+                }
+            }
+            turnPlayer = (index + 1) % playerNum;
+        }
         ChangeTurnPlayer();
         foreach (Player p in Players)
         {
@@ -520,7 +558,7 @@ public class GameManager : MonoBehaviour {
     void TurnEnd()
     {
         turnCount++;
-        TurnEndButton = false;
+        turnEndButton = false;
         selectedHand = 0;
         Players[turnPlayer].HideHands();
         turnPlayer = (turnPlayer + 1) % Players.Count;
@@ -554,10 +592,5 @@ public class GameManager : MonoBehaviour {
         }
         InfoUpdate();
 
-    }
-
-    public GameObject GetSelectedCard()
-    {
-        return Players[turnPlayer].HandsList[selectedHand];
     }
 }
