@@ -44,10 +44,10 @@ public class GameManager : MonoBehaviour {
     private string nextScene;
 
     [SerializeField]
-    private ParticleSystem point_change_effect;
+    private ParticleSystem point_change_effect, inf_effect, def_effect;
 
     [SerializeField]
-    private AudioClip point_change_Audio;
+    private AudioClip point_change_Audio, inf_Audio, def_Audio;
 
     private bool isKeyDown;
     AxisKeyManager axiskeymanager;
@@ -73,6 +73,8 @@ public class GameManager : MonoBehaviour {
         axiskeymanager = new AxisKeyManager();
 
         point_change_effect.Stop();
+        inf_effect.Stop();
+        def_effect.Stop();
     }
 
 
@@ -449,10 +451,14 @@ public class GameManager : MonoBehaviour {
             case 0: Players[turnPlayer].Draw(); break;//ドロー
             case 1:
                 Players[turnPlayer].Draw();//インフレ
+                inf_effect.Play();
+                audioSource.PlayOneShot(inf_Audio);
                 AllBuff(1);
                 break;
             case 2:
                 Players[turnPlayer].Draw();//デフレ
+                def_effect.Play();
+                audioSource.PlayOneShot(def_Audio);
                 AllBuff(-1); break;
             case 3:
 
@@ -471,19 +477,23 @@ public class GameManager : MonoBehaviour {
                 {
                     //コイントス表のアニメーション入れる
                     AllBuff(2);
+                    inf_effect.Play();
+                    audioSource.PlayOneShot(inf_Audio);
                     //Players[turnPlayer].SpecialPoint += 2;
                 }
                 else
                 {
                     //コイントス浦のアニメーション入れる
                     AllBuff(-2);
+                    def_effect.Play();
+                    audioSource.PlayOneShot(def_Audio);
                     //Players[turnPlayer].SpecialPoint -= 2;
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
         }
 
-        //得点が変わったとき音を鳴らす
+        //得点が変わったとき
         if (Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum != 0) 
         {
             point_change_effect.Play();
