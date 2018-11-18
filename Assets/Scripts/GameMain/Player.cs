@@ -25,7 +25,7 @@ public class Player:MonoBehaviour
     private List<float> handsStartPos=new List<float>();//ドローアニメーション開始位置の記録
     [SerializeField]
     private GameObject Hands,Deck,Field,Trash,gameManager;
-    private List<Sprite> miniCardSprites;
+    private List<Sprite> miniCardSprites, miniCardSprites_i, miniCardSprites_d;
     private void Start()
     {
     }
@@ -72,10 +72,37 @@ public class Player:MonoBehaviour
             card.Id = intDatas[0];
             card.Num = intDatas[1];
             card.CalcNum = intDatas[1];
+            if (card.Id != 1 && card.Id != 2)
+            {
+                card.Buf = 0;
+            }
+            else if(card.Id == 1)
+            {
+                card.Buf = 1;
+            }
+            else
+            {
+                card.Buf = -1;
+            }
+
             card.Count = card.GetThisName().Contains("カウント");
             cloneObject.transform.parent = Deck.transform;
             Text num = cardObject.transform.Find("Number").GetComponent<Text>();
-            num.text = card.Num.ToString();
+            if (card.Buf != 0)
+            {
+                if (card.Buf > 0)
+                {
+                    num.text = "+"+card.Buf.ToString();
+                }
+                else
+                {
+                    num.text = card.Buf.ToString();
+                }
+            }
+            else
+            {
+                num.text = card.Num.ToString();
+            }
             if (card.Id > 10 || card.Id < 6)
             {
                 num.color = new Color(1, 1, 1);
@@ -84,6 +111,7 @@ public class Player:MonoBehaviour
             name.text = card.GetThisName();
             Text text = cardObject.transform.Find("Text").GetComponent<Text>();
             text.text = card.GetThisText();
+
             /*if (cloneObject.GetComponent<Card>().Num >= 10)
             {
                 num.rectTransform.sizeDelta = new Vector2(148.5f, 145.8f);
@@ -113,6 +141,14 @@ public class Player:MonoBehaviour
         if (miniCardSprites == null)
         {
             miniCardSprites = gameManager.GetComponent<SpriteReader>().miniCardSprites;
+        }
+        if (miniCardSprites_i == null)
+        {
+            miniCardSprites_i = gameManager.GetComponent<SpriteReader>().miniCardSprites_i;
+        }
+        if (miniCardSprites_d == null)
+        {
+            miniCardSprites_d = gameManager.GetComponent<SpriteReader>().miniCardSprites_d;
         }
         if (drawing)
         {
@@ -177,7 +213,18 @@ public class Player:MonoBehaviour
         HandsList[n].transform.parent = Field.transform;
         GameObject miniCard = HandsList[n].transform.Find("MiniCard").gameObject;
         miniCard.SetActive(true);
-        miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
+        if (HandsList[n].GetComponent<Card>().Buf > 0)
+        {
+            miniCard.GetComponent<Image>().sprite = miniCardSprites_i[HandsList[n].GetComponent<Card>().Buf];
+        }
+        else if (HandsList[n].GetComponent<Card>().Buf < 0)
+        {
+            miniCard.GetComponent<Image>().sprite = miniCardSprites_d[-HandsList[n].GetComponent<Card>().Buf];
+        }
+        else
+        {
+            miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
+        }
         int space=20;
         int maxMini = 5;
         if (FieldList.Count < maxMini)
@@ -295,7 +342,6 @@ public class Player:MonoBehaviour
 
     public void HandsUpdateAnime()
     {
-        Debug.Log("はいはい");
         if (HandsList.Count != 0)
         {
             float width = HandsList[0].transform.Find("Card").GetComponent<RectTransform>().sizeDelta.x;
@@ -389,6 +435,19 @@ public class Player:MonoBehaviour
         foreach (GameObject go in HandsList)
         {
             go.transform.Find("Card").gameObject.SetActive(true);
+        }
+    }
+
+    public void setBuf(int b)
+    {
+        FieldList[FieldList.Count-1].GetComponent<Card>().Buf += b;
+        if (b > 0)
+        {
+            FieldList[FieldList.Count - 1].transform.Find("MiniCard").GetComponent<Image>().sprite = miniCardSprites_i[b];
+        }
+        else if (b < 0)
+        {
+            FieldList[FieldList.Count - 1].transform.Find("MiniCard").GetComponent<Image>().sprite = miniCardSprites_i[-b];
         }
     }
 }

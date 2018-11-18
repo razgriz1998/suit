@@ -14,22 +14,23 @@ public class GameManager : MonoBehaviour {
     private int turnPlayer = 0;
     private int handMax = 7;
     private int selectedHand = 0;
-    private bool turnEndButton = false;
+    public bool TurnEndButton { get; private set; }
     private int turn = 0;
-    private int turnNum = 5;
+    private const int turnNum = 4;
     private bool gameEnd = false;
     private bool nextPlayer = false;
     private bool decide = false;
     public int[,] Score { get; private set; }
-    private int playerNum = 4;
+    private const int playerNum = 4;
     private int turnCount = 0;
     private Animator playing = null;
     private string playingName = null;
     private bool cardplaying = false;
     private float cardplayTime = 0f;
     private int frameCount=0;
-    public bool pause { get; private set; }
-    public int pauseSelected{ get; private set; }
+    public bool Pause { get; private set; }
+    public bool KeyInput { get; private set; }
+    public int PauseSelected{ get; private set; }
     private const int numPauseText = 2;
     [SerializeField]
     private GameObject panel;
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        TurnEndButton = false;
         cardSprites = new List<Sprite> {drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
         handeathSprite, deckcountSprite, trashcountSprite, vaniraSprite ,handcountSprite,fieldcountSprite};
         Players = new List<Player>();
@@ -66,10 +68,10 @@ public class GameManager : MonoBehaviour {
         turnPlayer = turn;
         //HandUpdate();
         Players[turnPlayer].ShowHands();
-        ChangeTurnPlayer();
+        ChangeTurnPlayer(false);
         HandUpdate();
         InfoUpdate();
-        pauseSelected = 0;
+        PauseSelected = 0;
         axiskeymanager = new AxisKeyManager();
 
         point_change_effect.Stop();
@@ -102,21 +104,34 @@ public class GameManager : MonoBehaviour {
         if (!gameEnd)
         {
             
-            if(playing != null&&playingName=="TurnChange" && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
+            if(playing != null && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
             {
-                playing = null;
-                panel.GetComponent<Image>().enabled = false;
+                if (playingName == "PhaseChange")
+                {
+                    GameObject go = GameObject.Find("TurnChange");
+                    playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
+                    playing.SetTrigger("start");
+                    playingName = "TurnChange";
+                    panel.GetComponent<Image>().enabled = true;
+                }
+                else if (playingName == "TurnChange")
+                {
+                    playing = null;
+                    panel.GetComponent<Image>().enabled = false;
+                }
             }
             if (cardplaying)//カードの効果処理
             {
                 PlayAnime();
             }
-            if (!pause)
+            KeyInput = false;
+            if (!Pause)
             {
                 if (!cardplaying)
                 {
                     if (playing == null && Key())
                     {
+                        KeyInput = true;
                         if (nextPlayer)
                         {
                             TurnEnd();
@@ -133,16 +148,16 @@ public class GameManager : MonoBehaviour {
                     }
                 }
             }
-            else if (pause)
+            else if (Pause)
             {
-                Debug.Log(pauseSelected);
-                if (Key())
+                Debug.Log(PauseSelected);
+                if (KeyInput = Key())
                 {
                     if (decide)
                     {
-                        switch (pauseSelected)
+                        switch (PauseSelected)
                         {
-                            case 0: pause = false;break;
+                            case 0: Pause = false;break;
                             case 1: SceneManager.LoadScene("title"); break;
                         }
                     }
@@ -165,7 +180,7 @@ public class GameManager : MonoBehaviour {
         int horizontal_value = axiskeymanager.GetHorizontalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
         int vertical_value = axiskeymanager.GetVerticalKeyDown(ref isKeyDown, (turnPlayer + 1).ToString());
 
-        if (!pause)
+        if (!Pause)
         {   
             //カーソル右
             if (Input.GetKeyDown(KeyCode.D) || horizontal_value == 1)
@@ -202,7 +217,7 @@ public class GameManager : MonoBehaviour {
                 audioSource.clip = cardPickAudio;
                 audioSource.time = 0.3f;
                 audioSource.Play();
-                if (turnEndButton)
+                if (TurnEndButton)
                 {
                     nextPlayer = true;
                 }
@@ -220,8 +235,7 @@ public class GameManager : MonoBehaviour {
                 audioSource.Play(); 
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
-                    turnEndButton = !turnEndButton;
-                    Debug.Log(turnEndButton);
+                    TurnEndButton = !TurnEndButton;
                     return true;
                 }
                 return false;
@@ -229,8 +243,8 @@ public class GameManager : MonoBehaviour {
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Pause" + (turnPlayer + 1).ToString()))
             {
                 audioSource.PlayOneShot(cancelAudio);
-                pause = true;
-                pauseSelected = 0;
+                Pause = true;
+                PauseSelected = 0;
                 return true;
             }
         }
@@ -240,16 +254,16 @@ public class GameManager : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.W) || vertical_value == 1)
             {
                 audioSource.PlayOneShot(cursolAudio);
-                pauseSelected = (++pauseSelected) % numPauseText;
+                PauseSelected = (++PauseSelected) % numPauseText;
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.S) || vertical_value == -1)
             {
                 audioSource.PlayOneShot(cursolAudio);
-                --pauseSelected;
-                if (pauseSelected == -1)
+                --PauseSelected;
+                if (PauseSelected == -1)
                 {
-                    pauseSelected = numPauseText - 1;
+                    PauseSelected = numPauseText - 1;
                 }
                 return true;
             }
@@ -262,7 +276,7 @@ public class GameManager : MonoBehaviour {
             else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Cancel" + (turnPlayer + 1).ToString()))
             {
                 audioSource.PlayOneShot(cancelAudio);
-                pause = false; 
+                Pause = false; 
                 return true;
             }
         }
@@ -353,7 +367,7 @@ public class GameManager : MonoBehaviour {
                 Text num = Players[turnPlayer].HandsList[i].transform.Find("Card").transform.Find("Number").GetComponent<Text>(); ;
                 num.text = card.CalcNum.ToString();
             }
-            if (turnEndButton || i != selectedHand)
+            if (TurnEndButton || i != selectedHand)
             {
                 Players[turnPlayer].HandsList[i].transform.Find("Card").transform.Find("Arrow").GetComponent<Image>().enabled = false;
                 Players[turnPlayer].HandsList[i].transform.Find("Card").transform.localScale = new Vector3(0.4f, 0.4f);
@@ -369,12 +383,13 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.Find("Arrow").GetComponent<Image>().enabled = true;
-                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.localScale = new Vector3(0.45f, 0.45f);
-                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").transform.SetAsLastSibling();
+                Transform tf = GetSelectedCard().transform.Find("Card");
+                tf.transform.Find("Arrow").GetComponent<Image>().enabled = true;
+                tf.transform.localScale = new Vector3(0.45f, 0.45f);
+                tf.transform.SetAsLastSibling();
             }
         }
-        if (turnEndButton)
+        if (TurnEndButton)
         {
             GameObject.Find("TurnEndButton").transform.Find("Cursor").GetComponent<Image>().enabled = true;
         }
@@ -426,16 +441,17 @@ public class GameManager : MonoBehaviour {
         else
         {
             float target = 300f;
-            if (Players[turnPlayer].HandsList[selectedHand])
+            if (GetSelectedCard())
             {
-                RectTransform rt = Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<RectTransform>();
+                RectTransform rt = GetSelectedCard().transform.Find("Card").GetComponent<RectTransform>();
                 float newPosition = Mathf.SmoothStep(-140f,
                              target, (Time.time - cardplayTime) * 1.3f);
                 rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newPosition);
-                Players[turnPlayer].HandsList[selectedHand].transform.Find("Card").GetComponent<Image>().color = new Color(1, 1, 1, 1 - (Time.time - cardplayTime) * 1.3f);
+                GetSelectedCard().transform.Find("Card").GetComponent<Image>().color = new Color(1, 1, 1, 1 - (Time.time - cardplayTime) * 1.3f);
                 if (newPosition == target)
                 {
                     cardplaying = false;
+                    KeyInput = true;
                     Play();
                 }
             }
@@ -444,7 +460,7 @@ public class GameManager : MonoBehaviour {
 
     public void Play()
     {
-        int id = Players[turnPlayer].HandsList[selectedHand].GetComponent<Card>().Id;
+        int id = GetSelectedCard().GetComponent<Card>().Id;
         Players[turnPlayer].Play(selectedHand);
         switch (id)
         {
@@ -475,19 +491,17 @@ public class GameManager : MonoBehaviour {
             case 4://コイントス
                 if (Random.Range(0, 2) == 0)
                 {
-                    //コイントス表のアニメーション入れる
                     AllBuff(2);
                     inf_effect.Play();
                     audioSource.PlayOneShot(inf_Audio);
-                    //Players[turnPlayer].SpecialPoint += 2;
+                    Players[turnPlayer].setBuf(2);
                 }
                 else
                 {
-                    //コイントス浦のアニメーション入れる
                     AllBuff(-2);
                     def_effect.Play();
                     audioSource.PlayOneShot(def_Audio);
-                    //Players[turnPlayer].SpecialPoint -= 2;
+                    Players[turnPlayer].setBuf(-2);
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
@@ -501,8 +515,9 @@ public class GameManager : MonoBehaviour {
             Players[turnPlayer].NormalPoint += Players[turnPlayer].FieldList[Players[turnPlayer].FieldList.Count - 1].GetComponent<Card>().CalcNum;
         }
 
-        if (Players[turnPlayer].HandsList.Count == 0) {
-            turnEndButton = true;
+        if (Players[turnPlayer].HandsList.Count == 0) 
+        {
+            TurnEndButton = true;
         }
         selectedHand = 0;
         InfoUpdate();
@@ -510,7 +525,7 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void ChangeTurnPlayer()
+    public void ChangeTurnPlayer(bool phaseChange)
     {
         foreach (Player p in Players)
         {
@@ -519,36 +534,30 @@ public class GameManager : MonoBehaviour {
         if (turnPlayer >= 0 && turnPlayer < Players.Count) {
             Players[turnPlayer].TurnPlayer = true;
         }
-        GameObject go = GameObject.Find("TurnChange");
-        playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
-        playing.SetTrigger("start");
-        playingName = "TurnChange";
-        panel.GetComponent<Image>().enabled = true;
+        if (phaseChange)
+        {
+            GameObject go = GameObject.Find("TurnChange");
+            playing = go.transform.Find("Image5").GetComponent<Animator>();
+            playing.SetTrigger("start");
+            playingName = "PhaseChange";
+            panel.GetComponent<Image>().enabled = true;
+        }
+        else {
+            GameObject go = GameObject.Find("TurnChange");
+            playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
+            playing.SetTrigger("start");
+            playingName = "TurnChange";
+            panel.GetComponent<Image>().enabled = true;
+        }
     }
     void TurnChange()
     {
-        turnEndButton = false;
+        TurnEndButton = false;
         ScoreUpdate();
         turnCount = 0;
         turn++;
-        if (turn < playerNum)//最終ターン以外
-        {
-            turnPlayer = turn;
-        }
-        else//最終ターン
-        {
-            int max = -1, index = 0;
-            for (int i = 0; i < playerNum; i++)
-            {
-                if (max < Players[i].TotalScore)
-                {
-                    max = Players[i].TotalScore;
-                    index = i;
-                }
-            }
-            turnPlayer = (index + 1) % playerNum;
-        }
-        ChangeTurnPlayer();
+        turnPlayer = turn;
+        ChangeTurnPlayer(true);
         foreach (Player p in Players)
         {
             p.TurnChange();
@@ -558,7 +567,7 @@ public class GameManager : MonoBehaviour {
     void TurnEnd()
     {
         turnCount++;
-        turnEndButton = false;
+        TurnEndButton = false;
         selectedHand = 0;
         Players[turnPlayer].HideHands();
         turnPlayer = (turnPlayer + 1) % Players.Count;
@@ -576,7 +585,7 @@ public class GameManager : MonoBehaviour {
                     text.text = Players[i].TotalScore.ToString();
                     Score[i, turnNum] = Players[i].TotalScore;
                 }
-
+                gameEnd = true;
                 SceneManager.LoadScene(nextScene);
             }
             else
@@ -588,9 +597,17 @@ public class GameManager : MonoBehaviour {
         else
         {
             Players[turnPlayer].ShowHands();
-            ChangeTurnPlayer();
+            ChangeTurnPlayer(false);
         }
-        InfoUpdate();
+        if (!gameEnd)
+        {
+            InfoUpdate();
+        }
 
+    }
+
+    public GameObject GetSelectedCard()
+    {
+        return Players[turnPlayer].HandsList[selectedHand];
     }
 }
