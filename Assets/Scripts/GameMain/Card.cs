@@ -8,6 +8,7 @@ public class Card : MonoBehaviour
     public int Num { get; set; }//素点
     public int CalcNum{ get; set; }//カウント計算後の点
     public bool Count { get;  set; }//カウント系のカード
+    public int Buf { get; set; }//バフ値
     static private List<string> texts;
     static private List<string> names;
 
@@ -15,6 +16,7 @@ public class Card : MonoBehaviour
     {
         texts = new List<string>();
         names = new List<string>();
+
         texts.Add("あなたは山札からカードを1枚引く");
         names.Add("ドロー");
 

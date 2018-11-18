@@ -16,12 +16,12 @@ public class GameManager : MonoBehaviour {
     private int selectedHand = 0;
     public bool TurnEndButton { get; private set; }
     private int turn = 0;
-    private int turnNum = 4;
+    private const int turnNum = 4;
     private bool gameEnd = false;
     private bool nextPlayer = false;
     private bool decide = false;
     public int[,] Score { get; private set; }
-    private int playerNum = 4;
+    private const int playerNum = 4;
     private int turnCount = 0;
     private Animator playing = null;
     private string playingName = null;
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour {
         turnPlayer = turn;
         //HandUpdate();
         Players[turnPlayer].ShowHands();
-        ChangeTurnPlayer();
+        ChangeTurnPlayer(false);
         HandUpdate();
         InfoUpdate();
         PauseSelected = 0;
@@ -94,10 +94,21 @@ public class GameManager : MonoBehaviour {
         if (!gameEnd)
         {
             
-            if(playing != null&&playingName=="TurnChange" && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
+            if(playing != null && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
             {
-                playing = null;
-                panel.GetComponent<Image>().enabled = false;
+                if (playingName == "PhaseChange")
+                {
+                    GameObject go = GameObject.Find("TurnChange");
+                    playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
+                    playing.SetTrigger("start");
+                    playingName = "TurnChange";
+                    panel.GetComponent<Image>().enabled = true;
+                }
+                else if (playingName == "TurnChange")
+                {
+                    playing = null;
+                    panel.GetComponent<Image>().enabled = false;
+                }
             }
             if (cardplaying)//カードの効果処理
             {
@@ -467,12 +478,12 @@ public class GameManager : MonoBehaviour {
                 if (Random.Range(0, 2) == 0)
                 {
                     AllBuff(2);
-                    //Players[turnPlayer].SpecialPoint += 2;
+                    Players[turnPlayer].setBuf(2);
                 }
                 else
                 {
                     AllBuff(-2);
-                    //Players[turnPlayer].SpecialPoint -= 2;
+                    Players[turnPlayer].setBuf(-2);
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
@@ -488,7 +499,7 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void ChangeTurnPlayer()
+    public void ChangeTurnPlayer(bool phaseChange)
     {
         foreach (Player p in Players)
         {
@@ -497,11 +508,21 @@ public class GameManager : MonoBehaviour {
         if (turnPlayer >= 0 && turnPlayer < Players.Count) {
             Players[turnPlayer].TurnPlayer = true;
         }
-        GameObject go = GameObject.Find("TurnChange");
-        playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
-        playing.SetTrigger("start");
-        playingName = "TurnChange";
-        panel.GetComponent<Image>().enabled = true;
+        if (phaseChange)
+        {
+            GameObject go = GameObject.Find("TurnChange");
+            playing = go.transform.Find("Image5").GetComponent<Animator>();
+            playing.SetTrigger("start");
+            playingName = "PhaseChange";
+            panel.GetComponent<Image>().enabled = true;
+        }
+        else {
+            GameObject go = GameObject.Find("TurnChange");
+            playing = go.transform.Find("Image" + (turnPlayer + 1)).GetComponent<Animator>();
+            playing.SetTrigger("start");
+            playingName = "TurnChange";
+            panel.GetComponent<Image>().enabled = true;
+        }
     }
     void TurnChange()
     {
@@ -510,7 +531,7 @@ public class GameManager : MonoBehaviour {
         turnCount = 0;
         turn++;
         turnPlayer = turn;
-        ChangeTurnPlayer();
+        ChangeTurnPlayer(true);
         foreach (Player p in Players)
         {
             p.TurnChange();
@@ -538,7 +559,7 @@ public class GameManager : MonoBehaviour {
                     text.text = Players[i].TotalScore.ToString();
                     Score[i, turnNum] = Players[i].TotalScore;
                 }
-
+                gameEnd = true;
                 SceneManager.LoadScene(nextScene);
             }
             else
@@ -550,9 +571,12 @@ public class GameManager : MonoBehaviour {
         else
         {
             Players[turnPlayer].ShowHands();
-            ChangeTurnPlayer();
+            ChangeTurnPlayer(false);
         }
-        InfoUpdate();
+        if (!gameEnd)
+        {
+            InfoUpdate();
+        }
 
     }
 
