@@ -158,7 +158,7 @@ public class GameManager : MonoBehaviour {
                         switch (PauseSelected)
                         {
                             case 0: Pause = false;break;
-                            case 1: SceneManager.LoadScene("title"); break;
+                            case 1: DestroyThis(); SceneManager.LoadScene("title"); break;
                         }
                     }
                 }

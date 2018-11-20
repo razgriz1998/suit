@@ -391,6 +391,7 @@ GameObject:
   m_Component:
   - component: {fileID: 377135249}
   - component: {fileID: 377135248}
+  - component: {fileID: 377135250}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -411,7 +412,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -506,6 +507,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &377135250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 377135247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 027c66ed2512dba4ba0ae09805913144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loopTime: 2.4
+  endTime: 21.9
 --- !u!1 &472977133
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,6 +1339,7 @@ MonoBehaviour:
   StartButton_pos: {x: 71, y: -139, z: 0}
   ExitButton_pos: {x: 71, y: -224, z: 0}
   StartSceneName: Rule
+  Start_Icon: {fileID: 1032124522}
   rotate_speed: 4
   SE_cursor_move: {fileID: 519105533}
   SE_decide: {fileID: 1176723366}

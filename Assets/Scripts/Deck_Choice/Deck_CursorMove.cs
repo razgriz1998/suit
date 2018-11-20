@@ -26,6 +26,9 @@ public class Deck_CursorMove : MonoBehaviour {
     [SerializeField]
     private GameObject ExitIcon;
 
+    [SerializeField]
+    private GameObject red_deck_text, black_deck_text;
+
     private bool isKeyDown;
     private bool isDecide;
 
@@ -48,6 +51,8 @@ public class Deck_CursorMove : MonoBehaviour {
         this.transform.localPosition = red_deck_pos;
         DecidedObj.SetActive(false);
         isDecide = false;
+        red_deck_text.SetActive(true);
+        black_deck_text.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -67,9 +72,13 @@ public class Deck_CursorMove : MonoBehaviour {
 
                 if (AxisValue == 1 || AxisValue == -1 || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) {
                     if (this.transform.localPosition == red_deck_pos) {
+                        black_deck_text.SetActive(true);
+                        red_deck_text.SetActive(false);
                         this.transform.localPosition = black_deck_pos;
                     }
                     else if (this.transform.localPosition == black_deck_pos) {
+                        red_deck_text.SetActive(true);
+                        black_deck_text.SetActive(false);
                         this.transform.localPosition = red_deck_pos;
                     }
                 }
