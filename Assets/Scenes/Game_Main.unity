@@ -3978,6 +3978,9 @@ MonoBehaviour:
   cursolAudio: {fileID: 8300000, guid: 028dd77192c368f48a7ac4de42114573, type: 3}
   decisionAudio: {fileID: 8300000, guid: d5ccac5b8ddac4345b47df8f09a563df, type: 3}
   cardPickAudio: {fileID: 8300000, guid: 5572ce2a4bd69d548a7124a93567cf50, type: 3}
+  turnChangeAudio: {fileID: 8300000, guid: a57a13cfe213567479b9b38c01893fa4, type: 3}
+  inflAudio: {fileID: 8300000, guid: 45196fb2bfde7cf4fa977fe3bf3129a3, type: 3}
+  deflAudio: {fileID: 8300000, guid: 1ff78da927990d0438c9f0c0360a1a78, type: 3}
   drawSprite: {fileID: 21300000, guid: a766609a36cf847429ee87f7b9223b88, type: 3}
   inflationSprite: {fileID: 21300000, guid: 30cb3f18da9d7aa4294e59627c16eb03, type: 3}
   deflationSprite: {fileID: 21300000, guid: 360ae440af224a0429cabd562c22bb5b, type: 3}

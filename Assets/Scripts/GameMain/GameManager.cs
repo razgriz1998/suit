@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     private GameObject panel;
     [SerializeField]
-    private AudioClip cancelAudio, cursolAudio, decisionAudio, cardPickAudio;
+    private AudioClip cancelAudio, cursolAudio, decisionAudio, cardPickAudio,turnChangeAudio,inflAudio,deflAudio;
     private AudioSource audioSource;
     [SerializeField]
     private Sprite drawSprite, inflationSprite, deflationSprite, shuffleSprite, cointssSprite,
@@ -188,9 +188,7 @@ public class GameManager : MonoBehaviour {
             //カーソル右
             else if (Input.GetKeyDown(KeyCode.A) || horizontal_value == -1)
             {
-                audioSource.clip = cardPickAudio;
-                audioSource.time = 0.3f;
-                audioSource.Play();
+                playSE(cardPickAudio, 0.3f);
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     --selectedHand;
@@ -204,9 +202,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit" + (turnPlayer + 1).ToString()))
             {
-                audioSource.clip = cardPickAudio;
-                audioSource.time = 0.3f;
-                audioSource.Play();
+                playSE(cardPickAudio, 0.3f);
                 if (TurnEndButton)
                 {
                     nextPlayer = true;
@@ -220,9 +216,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.S) || vertical_value == 1 || vertical_value == -1)
             {
-                audioSource.clip = cardPickAudio;
-                audioSource.time = 0.3f;
-                audioSource.Play(); 
+                playSE(cardPickAudio, 0.3f);
                 if (Players[turnPlayer].HandsList.Count != 0)
                 {
                     TurnEndButton = !TurnEndButton;
@@ -459,10 +453,12 @@ public class GameManager : MonoBehaviour {
             case 1:
                 Players[turnPlayer].Draw();//インフレ
                 AllBuff(1);
+                playSE(inflAudio);
                 break;
             case 2:
                 Players[turnPlayer].Draw();//デフレ
-                AllBuff(-1); break;
+                AllBuff(-1);
+                playSE(deflAudio); break;
             case 3:
 
                 foreach (Player p in Players)
@@ -575,12 +571,25 @@ public class GameManager : MonoBehaviour {
         if (!gameEnd)
         {
             InfoUpdate();
+            playSE(turnChangeAudio);
         }
+
 
     }
 
     public GameObject GetSelectedCard()
     {
         return Players[turnPlayer].HandsList[selectedHand];
+    }
+
+    public void playSE(AudioClip ac,float s)
+    {
+        audioSource.clip = ac;
+        audioSource.time = s;
+        audioSource.Play();
+    }
+    public void playSE(AudioClip ac)
+    {
+        audioSource.PlayOneShot(ac);
     }
 }
