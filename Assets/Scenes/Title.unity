@@ -1339,6 +1339,7 @@ MonoBehaviour:
   StartButton_pos: {x: 71, y: -139, z: 0}
   ExitButton_pos: {x: 71, y: -224, z: 0}
   StartSceneName: Rule
+  Start_Icon: {fileID: 1032124522}
   rotate_speed: 4
   SE_cursor_move: {fileID: 519105533}
   SE_decide: {fileID: 1176723366}
