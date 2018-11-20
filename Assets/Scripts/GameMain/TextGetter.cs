@@ -13,9 +13,6 @@ public class TextGetter : MonoBehaviour {
         gm = GameManager.Instance;
 
     }
-	
-    //ターンエンドボタンの時切る
-    //ドローの時テキスト変わらない不具合
 
 	// Update is called once per frame
 	void Update () {
@@ -27,7 +24,7 @@ public class TextGetter : MonoBehaviour {
                     text.text = gm.GetSelectedCard().GetComponent<Card>().GetThisText();
                     break;
                 case "num":
-                    text.text = gm.GetSelectedCard().GetComponent<Card>().CalcNum.ToString();
+                    text.text = gm.GetSelectedCard().transform.Find("Card").Find("Number").GetComponent<Text>().text;
                     if (gm.GetSelectedCard().GetComponent<Card>().Count)
                     {
                         text.color= new Color(0.3389575f, 0.8113208f, 0.2104842f);

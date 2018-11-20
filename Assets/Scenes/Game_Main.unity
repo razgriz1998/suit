@@ -4067,6 +4067,9 @@ MonoBehaviour:
   cursolAudio: {fileID: 8300000, guid: 028dd77192c368f48a7ac4de42114573, type: 3}
   decisionAudio: {fileID: 8300000, guid: d5ccac5b8ddac4345b47df8f09a563df, type: 3}
   cardPickAudio: {fileID: 8300000, guid: 5572ce2a4bd69d548a7124a93567cf50, type: 3}
+  turnChangeAudio: {fileID: 8300000, guid: a57a13cfe213567479b9b38c01893fa4, type: 3}
+  inflAudio: {fileID: 8300000, guid: 45196fb2bfde7cf4fa977fe3bf3129a3, type: 3}
+  deflAudio: {fileID: 8300000, guid: 1ff78da927990d0438c9f0c0360a1a78, type: 3}
   drawSprite: {fileID: 21300000, guid: a766609a36cf847429ee87f7b9223b88, type: 3}
   inflationSprite: {fileID: 21300000, guid: 30cb3f18da9d7aa4294e59627c16eb03, type: 3}
   deflationSprite: {fileID: 21300000, guid: 360ae440af224a0429cabd562c22bb5b, type: 3}
@@ -4670,7 +4673,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 76.19999, y: 163.5}
+  m_AnchoredPosition: {x: 73.7, y: 166}
   m_SizeDelta: {x: 65.83, y: 79.94}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1144037979
@@ -4705,7 +4708,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 3c284cbce2b5f8143920b4105f38716b, type: 3}
+    m_Font: {fileID: 12800000, guid: eafbbb9ffd26ced418604e8867c56b3d, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0

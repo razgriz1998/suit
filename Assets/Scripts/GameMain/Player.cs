@@ -213,7 +213,7 @@ public class Player:MonoBehaviour
         HandsList[n].transform.parent = Field.transform;
         GameObject miniCard = HandsList[n].transform.Find("MiniCard").gameObject;
         miniCard.SetActive(true);
-        if (HandsList[n].GetComponent<Card>().Buf > 0)
+        /*if (HandsList[n].GetComponent<Card>().Buf > 0)
         {
             miniCard.GetComponent<Image>().sprite = miniCardSprites_i[HandsList[n].GetComponent<Card>().Buf];
         }
@@ -222,9 +222,9 @@ public class Player:MonoBehaviour
             miniCard.GetComponent<Image>().sprite = miniCardSprites_d[-HandsList[n].GetComponent<Card>().Buf];
         }
         else
-        {
+        {*/
             miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
-        }
+        //}
         int space=20;
         int maxMini = 5;
         if (FieldList.Count < maxMini)
@@ -438,7 +438,7 @@ public class Player:MonoBehaviour
         }
     }
 
-    public void setBuf(int b)
+    /*public void setBuf(int b)
     {
         FieldList[FieldList.Count-1].GetComponent<Card>().Buf += b;
         if (b > 0)
@@ -450,5 +450,6 @@ public class Player:MonoBehaviour
             FieldList[FieldList.Count - 1].transform.Find("MiniCard").GetComponent<Image>().sprite = miniCardSprites_i[-b];
         }
     }
+    */
 }
 
