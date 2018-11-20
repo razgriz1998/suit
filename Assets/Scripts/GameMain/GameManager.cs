@@ -93,8 +93,9 @@ public class GameManager : MonoBehaviour {
     void Update () {
         if (!gameEnd)
         {
-            
-            if(playing != null && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
+            KeyInput = false;
+
+            if (playing != null && !playing.GetCurrentAnimatorStateInfo(0).IsName("TurnChange")&&frameCount!=0 )
             {
                 if (playingName == "PhaseChange")
                 {
@@ -114,7 +115,6 @@ public class GameManager : MonoBehaviour {
             {
                 PlayAnime();
             }
-            KeyInput = false;
             if (!Pause)
             {
                 if (!cardplaying)
@@ -450,6 +450,7 @@ public class GameManager : MonoBehaviour {
 
     public void Play()
     {
+        KeyInput = true;
         int id = GetSelectedCard().GetComponent<Card>().Id;
         Players[turnPlayer].Play(selectedHand);
         switch (id)
@@ -478,12 +479,10 @@ public class GameManager : MonoBehaviour {
                 if (Random.Range(0, 2) == 0)
                 {
                     AllBuff(2);
-                    Players[turnPlayer].setBuf(2);
                 }
                 else
                 {
                     AllBuff(-2);
-                    Players[turnPlayer].setBuf(-2);
                 }
                 break;
             case 5: Handeath(); break;//ハンデス
