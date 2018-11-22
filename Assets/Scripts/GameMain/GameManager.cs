@@ -73,10 +73,6 @@ public class GameManager : MonoBehaviour {
         InfoUpdate();
         PauseSelected = 0;
         axiskeymanager = new AxisKeyManager();
-
-        point_change_effect.Stop();
-        inf_effect.Stop();
-        def_effect.Stop();
     }
 
 
@@ -91,7 +87,9 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-
+        point_change_effect.Stop();
+        inf_effect.Stop();
+        def_effect.Stop();
     }
 
     public void DestroyThis()
