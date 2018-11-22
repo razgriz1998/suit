@@ -119,6 +119,7 @@ public class GameManager : MonoBehaviour {
                     panel.GetComponent<Image>().enabled = false;
                 }
             }
+            
             if (cardplaying)//カードの効果処理
             {
                 PlayAnime();
@@ -127,8 +128,11 @@ public class GameManager : MonoBehaviour {
             {
                 if (!cardplaying)
                 {
+
+                    
                     if (playing == null && Key())
                     {
+                        
                         KeyInput = true;
                         if (nextPlayer)
                         {
@@ -148,7 +152,6 @@ public class GameManager : MonoBehaviour {
             }
             else if (Pause)
             {
-                Debug.Log(PauseSelected);
                 if (KeyInput = Key())
                 {
                     if (decide)
@@ -563,6 +566,12 @@ public class GameManager : MonoBehaviour {
         Players[turnPlayer].HideHands();
         turnPlayer = (turnPlayer + 1) % Players.Count;
 
+        if (Players[turnPlayer].HandsList.Count == 0)
+        {
+            TurnEndButton = true;
+        }
+        HandUpdate();
+
         if (turnCount == playerNum)//ターンチェンジ判定
         {
             TurnChange();
@@ -596,11 +605,14 @@ public class GameManager : MonoBehaviour {
             playSE(turnChangeAudio);
         }
 
-
     }
 
     public GameObject GetSelectedCard()
     {
+        if (TurnEndButton || Players[turnPlayer].HandsList.Count==0)
+        {
+            return null;
+        }
         return Players[turnPlayer].HandsList[selectedHand];
     }
 

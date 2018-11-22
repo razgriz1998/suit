@@ -223,7 +223,14 @@ public class Player:MonoBehaviour
         }
         else
         {*/
+        if (HandsList[n].GetComponent<Card>().CalcNum <= 12)
+        {
             miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
+        }
+        else
+        {
+            miniCard.GetComponent<Image>().sprite = miniCardSprites[12];
+        }
         //}
         int space=20;
         int maxMini = 5;
@@ -378,7 +385,6 @@ public class Player:MonoBehaviour
 
     public void HandsUpdate()
     {
-        Debug.Log("はいはいはい");
         if (HandsList.Count != 0)
         {
             float width = HandsList[0].transform.Find("Card").GetComponent<RectTransform>().sizeDelta.x;

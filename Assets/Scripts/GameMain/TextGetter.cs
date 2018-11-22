@@ -16,7 +16,7 @@ public class TextGetter : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (gm.KeyInput||text.text=="")
+        if ((gm.KeyInput||text.text=="")&& gm.GetSelectedCard())
         {
             switch (mode)
             {
