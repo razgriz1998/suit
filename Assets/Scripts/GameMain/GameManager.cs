@@ -119,7 +119,12 @@ public class GameManager : MonoBehaviour {
                     panel.GetComponent<Image>().enabled = false;
                 }
             }
-            
+            if (Players[turnPlayer].HandsList.Count == 0&&!TurnEndButton)
+            {
+                TurnEndButton = true;
+                HandUpdate();
+            }
+            HandUpdate();
             if (cardplaying)//カードの効果処理
             {
                 PlayAnime();

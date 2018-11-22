@@ -171,7 +171,7 @@ public class Player:MonoBehaviour
                 DeckList[r] = DeckList[i];
                 DeckList[i] = myGo;
             }
-            if (TurnPlayer && !drawing)
+            if (TurnPlayer)
             {
                 HandsAnimeStart();
             }
@@ -186,7 +186,8 @@ public class Player:MonoBehaviour
     {
         if (DeckList.Count != 0)
         {
-            
+
+            DeckList[0].transform.Find("Card").GetComponent<RectTransform>().anchoredPosition = new Vector2(494, -140);
             DeckList[0].transform.parent = Hands.transform;
             if (TurnPlayer)
             {
