@@ -224,13 +224,13 @@ public class Player:MonoBehaviour
         }
         else
         {*/
-        if (HandsList[n].GetComponent<Card>().CalcNum <= 12)
+        if (HandsList[n].GetComponent<Card>().CalcNum < miniCardSprites.Count)
         {
             miniCard.GetComponent<Image>().sprite = miniCardSprites[HandsList[n].GetComponent<Card>().CalcNum];
         }
         else
         {
-            miniCard.GetComponent<Image>().sprite = miniCardSprites[12];
+            miniCard.GetComponent<Image>().sprite = miniCardSprites[miniCardSprites.Count-1];
         }
         //}
         int space=20;
